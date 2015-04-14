@@ -1,9 +1,17 @@
 <?
 	include("../class/class.mysql.php");
+	include("../php/config.php");
 
 	header('Content-Type: application/json; charset=utf-8');
 
-	$db = new MySQL(); 
+	$db = new MySQL();
+	
+	$objSQL = new sqlRules();
+	
+	$objSQL->whereBasicsCol = 'flag';
+	$objSQL->whereBasicsVal = '0';
+	
+	
 	
 	$arWhereBasics = array('flag' => '0');
 	
