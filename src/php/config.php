@@ -22,7 +22,6 @@
 		private $wheresVal;
 
 		
-		
 		//Constructor
 		function sqlRules($whereBasicsCol='',
 						  $whereBasicsVal='',
@@ -47,7 +46,7 @@
 		}
 		
 		//Converte um ou mais strings com virgulas em arrays
-		function stringSplitToArray ($strValues,$strColumns = Null){
+		private function stringSplitToArray ($strValues,$strColumns = Null){
 			
 			var $arReturn = array ();
 			
