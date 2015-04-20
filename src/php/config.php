@@ -1,108 +1,29 @@
 <?
+	// Name:	Configuration class
+	// Desc:	Centraliza todas as opções de configuração da aplicação
+	// Date:    20/04/2015
 	class appConfig {
 		
 		public $sql_list_size;
 		public $app_vote_question;
+		public $transactionKey;
 		
+		//Constructor da classe
 		function appConfig () {
 			//perguntas por página
 			$this -> sql_list_size = 5;
 			
+			//ordenação dos resultados
+			$this -> sql_result_order = "DESC";
+			
 			//Quantos votos uma pergunta precisa para ser aprovada
 			$this -> app_vote_question = 5;
+			
+			//Chave de encriptação
+			$date = getdate();
+			$apppass = 'v5b6n7';
+			$this -> transactionKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);
 		}
 	}
-	
-	class sqlRules {
-		
-		public $whereBasicsCol; 	//Condição where caso não tenha nenhuma
-		public $whereBasicsVal;
-		public $cols;		  		//Colunas a serem exibidas em um select
-		public $wheresCol;      	//Condição where da query
-		public $wheresVal;
-		public $tableName;   		//Nome da tabela
 
-		//Constructor
-		function sqlRules($tableName='',
-						  $whereBasicsCol='',
-						  $whereBasicsVal='',
-						  $cols='',
-						  $wheresCol='',
-						  $wheresVal=''){
-							  	  
-			$this->whereBasicsCol = $whereBasicsCol; 	
-			$this->whereBasicsVal = $whereBasicsVal;
-			$this->cols = $cols;		  		
-			$this->wheresCol = $wheresCol;      	
-			$this->wheresVal = $wheresVal;
-			$this->tableName = $tableName;
-			
-		}
-		
-		//Roda a query caso os pre-requisitos 
-		//estejam preenchidos
-		function execQuery(){
-			
-			//Deve ter, pelo menos, o nome da tabela
-			if (strlen($this->tableName)>0){
-				
-				//SETA os arrays
-				//Filtros básicos
-				$arWhereBasics = array();
-				if(strlen($this->whereBasicsCol)>0 && strlen($this->whereBasicsVal)>0){
-					$arWhereBasicsCol = explode(',',$this->whereBasicsCol);
-					$arWhereBasicsVal = explode(',',$this->whereBasicsVal);
-					$arWhereBasics = array_combine($arWhereBasicsCol,$arWhereBasicsVal);
-				}
-				
-				//Filtros opcionais
-				$arWheres = array();
-				if(strlen($this->wheresCol)>0 && strlen($this->wheresVal)>0){
-					$arWhereCol = explode(',',$this->wheresCol);
-					$arWhereVal = explode(',',$this->wheresVal);
-					$arWheres = array_combine($arWhereCol,$arWhereVal);
-				}
-				
-				//Junta os arrays
-				$arWheres = array_merge($arWhereBasics,$arWheres);
-								
-				//Filtros das colunas
-				$arCols = array();
-				if(strlen($cols)>0)
-				{
-					$arCols = explode(',',$cols);
-				}	
-					
-					
-				$db = new MySQL();			
-				$sqlQuery = $db->BuildSQLSelect($this->tableName,$arWheres,$arCols);
-				$db->Query($sqlQuery);
-				$jsonQuery = $db->GetJSON();
-			}
-			return $jsonQuery;	
-		}
-		
-		
-		
-		//
-		function outPutJson(){
-			
-		}
-		
-		//Converte um ou mais strings com virgulas em arrays
-		// private function stringSplitToArray ($strValues,$strColumns = Null){
-			
-			// $arReturn = array ();
-			
-			// if($strColumns == Null){
-				// $arCols = explode(',', $strColumns);
-				// $arvals = explode(',', $strValues); 
-				// $arReturn = array_combine($arCols,$arVals);
-			// } else {
-				// $arReturn = explode(',', $strValues);
-			// }
-			
-			// return $arReturn;
-		// }
-	}
 ?>
