@@ -5,10 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Home Page</title>
+    <title>mtapp</title>
 
     <!-- Bootstrap -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/mtapp.css" rel="stylesheet">
+	
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -17,13 +19,54 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
-    <h1>Hello, world!</h1>
+  <body ng-app="mtApp">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<!-- MOBILE -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Mudar navegação</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">mtapp</a>
+			</div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
+			<!-- TOPBAR -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="/home">Home <span class="sr-only">(atual)</span></a></li>
+					<li><a href="/pergunta">Nova pergunta</a></li>
+					<li><a href="/perfil">Perfil</a></li>
+					<li><a href="/sair">Sair</a></li>
+					<li><a href="/login">Entrar</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+	
+	<div id="main">
+		<div ng-view>
+		
+		</div>
+	</div>
+
+	</div>
+	<footer>
+	
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="text-center">
+				mtapp - versão alpha
+			</div>
+		</nav>
+	</footer>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>	
 	<script src="../js/scripts.js"></script>
     <script src="../js/bootstrap.min.js"></script>
+	<script src="../js/angular.min.js"></script>
+	<script src="../app/mtapp.app.js"></script>
   </body>
 </html>
