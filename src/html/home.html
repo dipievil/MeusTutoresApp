@@ -1,4 +1,44 @@
-<div ng-controller="mtappHomeCtrl">	
+<div ng-controller="mtHomeCtrl">	
+
+	<div ng-repeat="question in perguntasModel">
+		<div>
+			<form class="form-horizontal">	
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel" ng-class="panelClass[question.answered]">
+							<div class="panel-heading" role="tab" id="headquestion">
+								<div class="row">
+									<div class="col-md-12 clicable" 
+										 data-toggle="collapse" 
+										 data-target="{{'#collapse' + $index}}" >
+										<b>{{question.question}}</b> (por: <a href="../Perfil">{{question.user}}</a>)
+									</div>
+								</div>
+							</div>
+							<div id="{{'collapse' + $index}}" 
+								 class="panel-collapse collapse" 
+								 role ="tabpanel" 
+								 aria-labelledby="headquestion">
+								 <div class="panel-body">
+									<div class="row">
+										<div class="col-md-8">
+											Resposta 
+										</div>
+									</div>
+								 </div>
+								 
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<span>{{errorMessage}}</span>
+	
+	
+	
 	<form class="form-horizontal">
 		<div class="row">
 			<div class="col-md-12">
@@ -7,12 +47,12 @@
 						<div class="row">
 							<div class="col-md-12 clicable" 
 							     data-toggle="collapse" 
-								 data-target="#collapse1" >
+								 data-target="#collapse3" >
 								Pergunta 1
 							</div>
 						</div>
 					</div>
-					<div id="collapse1" 
+					<div id="collapse3" 
 						 class="panel-collapse collapse" 
 						 role ="tabpanel" 
 						 aria-labelledby="headquestion">

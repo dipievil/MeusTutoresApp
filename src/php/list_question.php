@@ -28,15 +28,15 @@
 	$objSQL->sqlSortAscending = 'DESC';
 	
 	if($_REQUEST['id_question']){
-		$objSQL -> cols = 'question,id_user,data,flag';
+		$objSQL -> cols = 'question,id_user,data,answered,flag';
 		$arWheresCol[] = 'id_question';
 		$arWheresVal[] = $_REQUEST['id_question']; 
 	} else if($_REQUEST['id_user']){
-		$objSQL -> cols = 'id_question,question,data,flag';	
+		$objSQL -> cols = 'id_question,question,data,answered,flag';	
 		$arWheresCol[] = 'id_user';
 		$arWheresVal[] = $_REQUEST['id_user'];
 	} else {
-		$objSQL -> cols = 'id_question,question,id_user';
+		$objSQL -> cols = 'id_question,question,id_user,answered';
 	}
 
 	if(count($arWheresCol)>0)
