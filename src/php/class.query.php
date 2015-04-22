@@ -84,30 +84,49 @@
 									
 					//Filtros das colunas
 					$arCols = array();
-					
+				
+					//Todas as colunas
+					$tableName = $this->tableName;
 					if(strlen($this->cols)>0){
 						$arCols = explode(',',$this->cols);
 					}else{
-						//Todas as colunas
-						$tableName = $this->tableName;
 						$arCols = $db->GetColumnNames($tableName);
 					}
 					
-					$sqlQuery = $db->BuildSQLSelect($this->tableName,
+					$sqlQuery = $db->BuildSQLSelect($tableName,
 													$arWheres,
 													$arCols,
 													$this->sqlSortColumns,
 													$this->sqlSortAscending,
 													$this->sqlLimit);
-						
+					
+					//JOINs
+					// Verifica se a coluna possui sufixo '_id'
+					// e substitui pelo valor da tabela correspondente
+					foreach ($arCols as $coluna){
+						if(strpos($coluna,'id_') !== false && $coluna != 'id_'.$tableName){
+							$tableCheck = str_replace('id_','',$coluna);
+							$joinSQL .= ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
+							$keyToChange = array_search($coluna,$arCols);
+							$arColChange = $db->GetColumnNames($tableCheck);
+							
+							$arCols[$keyToChange] = $arColChange[1];
+							$sqlQuery = str_replace('`'.$tableName.'`.`'.$coluna.'`','`'.$tableCheck.'`.`'.$arColChange[1].'`',$sqlQuery);
+							$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
+						}
+					}
+					
 					$db->Query($sqlQuery);
-					$jsonQuery = $db->GetJSON();
-					if($jsonQuery == null)
-						$jsonQuery = "{':'}";
-
+					if($db->Error()){
+						$jsonQuery = "{'Error':'".$db->Error()."'}";
+					} else {
+						$jsonQuery = $db->GetJSON();
+						if($jsonQuery == null)
+							$jsonQuery = "{'':''}";
+					}
 					
 				} else {
-					$jsonQuery = '{}';
+					$jsonQuery = "{'':''}";
 				
 				}
 			} else {

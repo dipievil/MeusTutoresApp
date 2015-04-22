@@ -38,9 +38,11 @@
 	} else {
 		$objSQL -> cols = 'id_question,question,id_user';
 	}
-	echo $objSQL -> cols;
-	$objSQL -> wheresCol = implode($arWheresCol);
-	$objSQL -> wheresVal = implode($arWheresVal); 
+
+	if(count($arWheresCol)>0)
+		$objSQL -> wheresCol = implode($arWheresCol);
+	if(count($arWheresVal)>0)
+		$objSQL -> wheresVal = implode($arWheresVal); 
 	
 	$strQuery = $objSQL->execQuery();
 

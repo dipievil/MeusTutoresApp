@@ -146,7 +146,7 @@ class MySQL
      * @param boolean $showAlias (Optional) TRUE to show column alias
      * @return string Returns the SQL column list
      */
-    static private function BuildSQLColumns($columns, $addQuotes = true, $showAlias = true) {
+    static private function BuildSQLColumns($columns, $addQuotes = true, $showAlias = true, $tableName = null) {
         if ($addQuotes) {
             $quote = "`";
         } else {
@@ -158,9 +158,13 @@ class MySQL
                 foreach ($columns as $key => $value) {
                     // Build the columns
                     if (strlen($sql) == 0) {
-                        $sql = $quote . $value . $quote;
+						if($tableName != null)
+							$sql = $quote . $tableName . $quote . '.' . $quote . $value . $quote;
+						else
+							$sql = $quote . $value . $quote;
                     } else {
-                        $sql .= ", " . $quote . $value . $quote;
+						if($tableName != null)
+							$sql .= ", " . $quote . $tableName . $quote . '.' . $quote . $value . $quote;
                     }
                     if ($showAlias && is_string($key) && (! empty($key))) {
                         $sql .= ' AS "' . $key . '"';
@@ -169,7 +173,12 @@ class MySQL
                 return $sql;
                 break;
             case "string":
-                return $quote . $columns . $quote;
+				if($tableName != null)
+					$sqlString = $quote . $tableName . $quote . '.' . $quote . $columns . $quote;
+				else
+					$sqlString = $quote . $columns . $quote;
+				
+                return $sqlString;
                 break;
             default:
                 return false;
@@ -232,17 +241,17 @@ class MySQL
     static public function BuildSQLSelect($tableName, $whereArray = null, $columns = null,
                                           $sortColumns = null, $sortAscending = true, $limit = null) {
         if (! is_null($columns)) {
-            $sql = self::BuildSQLColumns($columns);
+            $sql = self::BuildSQLColumns($columns,true,true,$tableName);
         } else {
             $sql = "*";
         }
         $sql = "SELECT " . $sql . " FROM `" . $tableName . "`";
         if (is_array($whereArray)) {
-            $sql .= self::BuildSQLWhereClause($whereArray);
+            $sql .= self::BuildSQLWhereClause($whereArray,$tableName);
         }
         if (! is_null($sortColumns)) {
             $sql .= " ORDER BY " .
-                    self::BuildSQLColumns($sortColumns, true, false) .
+                    self::BuildSQLColumns($sortColumns, true, false,$tableName) .
                     " " . ($sortAscending ? "ASC" : "DESC");
         }
         if (! is_null($limit)) {
@@ -293,22 +302,25 @@ class MySQL
      * strings, formatted dates, ect)
      * @return string Returns a string containing the SQL WHERE clause
      */
-    static public function BuildSQLWhereClause($whereArray) {
+    static public function BuildSQLWhereClause($whereArray,$tableName = null) {
         $where = "";
+		if($tableName != null){
+			$tableName = '`'.$tableName.'`.';
+		}
         foreach ($whereArray as $key => $value) {
             if (strlen($where) == 0) {
                 if (is_null($value)) {
                     $where = " WHERE `" . $key . "` IS NULL";
                 } else if (is_string($key)) {
-                    $where = " WHERE `" . $key . "` = " . $value;
+                    $where = " WHERE ".$tableName."`" . $key . "` = " . $value;
                 } else {
                     $where = " WHERE " . $value;
                 }
             } else {
                 if (is_null($value)) {
-                    $where = " AND `" . $key . "` IS NULL";
+                    $where = " AND ".$tableName."`" . $key . "` IS NULL";
                 } else if (is_string($key)) {
-                    $where .= " AND `" . $key . "` = " . $value;
+                    $where .= " AND ".$tableName."`" . $key . "` = " . $value;
                 } else {
                     $where .= " AND " . $value;
                 }
