@@ -23,7 +23,7 @@ angular.module('mtApp.Controllers',[])
 		 })
 		 .error(function (data, status, headers, config) {
 			$scope.errorMessage = "Falha ao realizar a consulta # " + status;
-		 });
+		 });	
 	
 	console.log = $scope.errorMessage;
 });	

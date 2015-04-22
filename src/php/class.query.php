@@ -52,7 +52,7 @@
 		
 		//Roda a query caso os pre-requisitos 
 		//estejam preenchidos
-		function execQuery(){
+		function execQuery($DEBUG = null){
 			
 			$db = new MySQL();
 			
@@ -100,24 +100,41 @@
 													$this->sqlSortAscending,
 													$this->sqlLimit);
 					
+					if($DEBUG != null)
+						echo $sqlQuery."\n\n";
+					
 					//JOINs
 					// Verifica se a coluna possui sufixo '_id'
 					// e substitui pelo valor da tabela correspondente
 					foreach ($arCols as $coluna){
 						if(strpos($coluna,'id_') !== false && $coluna != 'id_'.$tableName){
+							//Nome da tabela do Join
 							$tableCheck = str_replace('id_','',$coluna);
-							$joinSQL .= ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
+							
+							//Altera coluna do ID pela coluna com valor
 							$keyToChange = array_search($coluna,$arCols);
 							$arColChange = $db->GetColumnNames($tableCheck);
-							
 							$arCols[$keyToChange] = $arColChange[1];
 							$sqlQuery = str_replace('`'.$tableName.'`.`'.$coluna.'`','`'.$tableCheck.'`.`'.$arColChange[1].'`',$sqlQuery);
-							$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
+							
+							//Adiciona o Join da tabela se ainda não tem
+							if($DEBUG){
+								echo 'Pos :'.strpos($sqlQuery,' JOIN `'.$tableCheck.'`')."\n\n";
+								echo ' JOIN `'.$tableCheck."\n\n";
+								echo $sqlQuery."\n\n";
+							}
+							if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == false){
+								$joinSQL .= ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
+								$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
+							}
 						}
 					}
 					
-					$db->Query($sqlQuery);
-					if($db->Error()){
+					if($DEBUG != null)
+						echo $sqlQuery."\n\n";
+					
+					//$db->Query($sqlQuery);
+					if(!$db->Query($sqlQuery)){
 						$jsonQuery = "{'Error':'".$db->Error()."'}";
 					} else {
 						$jsonQuery = $db->GetJSON();
