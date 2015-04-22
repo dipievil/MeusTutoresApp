@@ -1,4 +1,5 @@
-angular.module ('desculpizatorApp.Repositories')
+/*
+angular.module ('mtApp.Repositories')
 	.factory ('modoRepository', ['$http', function ($http) { 
 		return { 
 			buscarModo: function (callback) { 
@@ -9,7 +10,7 @@ angular.module ('desculpizatorApp.Repositories')
 	}; 
 }]);
 
-angular.module ('desculpizatorApp.Repositories')
+angular.module ('mtApp.Repositories')
 	.factory ('acaoRepository', ['$http', function ($http) { 
 		return { 
 			buscaAcao: function (callback) { 
@@ -20,7 +21,7 @@ angular.module ('desculpizatorApp.Repositories')
 	}; 
 }]);
 
-angular.module ('desculpizatorApp.Repositories')
+angular.module ('mtApp.Repositories')
 	.factory ('culpadoRepository', ['$http', function ($http) { 
 		return { 
 			buscarCulpado: function (callback) { 
@@ -31,7 +32,7 @@ angular.module ('desculpizatorApp.Repositories')
 	}; 
 }]);
 
-angular.module ('desculpizatorApp.Repositories')
+angular.module ('mtApp.Repositories')
 	.factory ('vitimaRepository', ['$http', function ($http) { 
 		return { 
 			buscarVitima: function (callback) { 
@@ -41,3 +42,4 @@ angular.module ('desculpizatorApp.Repositories')
 		} 
 	};
 }]);
+*/
