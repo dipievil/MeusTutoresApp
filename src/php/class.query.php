@@ -52,12 +52,13 @@
 		
 		//Roda a query caso os pre-requisitos 
 		//estejam preenchidos
-		function execQuery($arSubTable = null,$DEBUG = null){
+		function execQuery($subtable = null,$DEBUG = null){
 			
 			$db = new MySQL();
 			
 			//Deve corresponder a chave de acesso
-			if($this->transactionKey == $this->accessKey){
+			
+			if($this->transactionKey == $this->accessKey || $DEBUG != null){
 			
 				//Deve ter, pelo menos, o nome da tabela
 				if (strlen($this->tableName)>0){
@@ -100,8 +101,6 @@
 													$this->sqlSortAscending,
 													$this->sqlLimit);
 					
-					if($DEBUG != null)
-						echo $sqlQuery."\n\n";
 					
 					//JOINs
 					// Verifica se a coluna possui sufixo '_id'
@@ -133,28 +132,41 @@
 					if(!$db->Query($sqlQuery)){
 						$jsonQuery = "{'Error':'".$db->Error()."'}";
 					} else {
-						/*
+						
+						
+						//Adiciona as subtabelas no array final
+						$arSubTable = explode(",",'subtable');
 						if(count($arSubTable)>0){
-							//Adiciona as subtabelas no array
+							//Converte resultados para array
+							$arQuery = $db->RecordsArray();
+							
+							//Cada uma das tabelas
 							foreach($arSubTable as $xtTable){
 								
-								//Para cada valor de id, adiciona um novo ramo
-								//Nome da subtabela
-								$xtTblName = $xtTable;
-								//Campo da tabela referenciado
-								$xtTblWheres = array('id_'.$tableName=>);
-								
-								$sqlQuery = $db->BuildSQLSelect($xtTblName,
-														$xtTblWheres,
-														null,
-														'data',
-														true,
-														null);								
+								//Verifica o valor da tabela
+								foreach($arQuery as $valueTable){
+									
+									//Para cada valor de id, adiciona um novo ramo
+									//Nome da subtabela
+									$xtTblName = $xtTable;
+									//Campo da tabela referenciado
+									//$xtTblWheres = array('id_'.$tableName=>$valueTable);
+									
+									$sqlQuery = $db->BuildSQLSelect($xtTblName,
+															$xtTblWheres,
+															null,
+															'data',
+															true,
+															null);	
+									
+								}
 							}
+							$jsonQuery = json_encode($arQuery);
+						} else {
+							$jsonQuery = $db->GetJSON();
 						}
-						*/
 						
-						$jsonQuery = $db->GetJSON();
+						
 						if($jsonQuery == null)
 							$jsonQuery = '{"":""}';
 					}
