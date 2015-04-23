@@ -52,7 +52,7 @@
 		
 		//Roda a query caso os pre-requisitos 
 		//estejam preenchidos
-		function execQuery($DEBUG = null){
+		function execQuery($arSubTable = null,$DEBUG = null){
 			
 			$db = new MySQL();
 			
@@ -118,13 +118,9 @@
 							$sqlQuery = str_replace('`'.$tableName.'`.`'.$coluna.'`','`'.$tableCheck.'`.`'.$arColChange[1].'`',$sqlQuery);
 							
 							//Adiciona o Join da tabela se ainda não tem
-							if($DEBUG){
-								echo 'Pos :'.strpos($sqlQuery,' JOIN `'.$tableCheck.'`')."\n\n";
-								echo ' JOIN `'.$tableCheck."\n\n";
-								echo $sqlQuery."\n\n";
-							}
-							if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == false){
-								$joinSQL .= ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
+							if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == null){
+								
+								$joinSQL = ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
 								$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
 							}
 						}
@@ -137,17 +133,38 @@
 					if(!$db->Query($sqlQuery)){
 						$jsonQuery = "{'Error':'".$db->Error()."'}";
 					} else {
+						/*
+						if(count($arSubTable)>0){
+							//Adiciona as subtabelas no array
+							foreach($arSubTable as $xtTable){
+								
+								//Para cada valor de id, adiciona um novo ramo
+								//Nome da subtabela
+								$xtTblName = $xtTable;
+								//Campo da tabela referenciado
+								$xtTblWheres = array('id_'.$tableName=>);
+								
+								$sqlQuery = $db->BuildSQLSelect($xtTblName,
+														$xtTblWheres,
+														null,
+														'data',
+														true,
+														null);								
+							}
+						}
+						*/
+						
 						$jsonQuery = $db->GetJSON();
 						if($jsonQuery == null)
-							$jsonQuery = "{'':''}";
+							$jsonQuery = '{"":""}';
 					}
 					
 				} else {
-					$jsonQuery = "{'':''}";
+					$jsonQuery = '{"":""}';
 				
 				}
 			} else {
-				$jsonQuery = "{'error':'Accesskey check fail'}";
+				$jsonQuery = '{"error":"Accesskey check fail"}';
 			}
 			
 			

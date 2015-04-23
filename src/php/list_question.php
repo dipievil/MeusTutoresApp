@@ -6,21 +6,22 @@
 	$objSQL = new queryConsult();
 	
 	//DEBUG//
-	$date = getdate();
-	$apppass = 'v5b6n7';
-	$objSQL -> accessKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);			
+	//$date = getdate();
+	//$apppass = 'v5b6n7';
+	//$objSQL -> accessKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);			
 	//DEBUG//	
 	
 	$objSQL->tableName = 'question';
 	$objSQL->whereBasicsCol = 'ativo';
 	$objSQL->whereBasicsVal = '1';
+	$objSQL -> accessKey = $_REQUEST['key'];
 	
 	if($_REQUEST['answered']){
 		$arWheresCol[] = 'aswered';
 		$arWheresVal[] = '1';
 	}
 	
-	if($_REQUEST[$sortColumns])
+	if($_REQUEST['sortcolumns'])
 		$objSQL->sqlSortColumns = $_REQUEST[$sortColumns];
 	else
 		$objSQL->sqlSortColumns = 'data';
@@ -29,14 +30,14 @@
 	
 	if($_REQUEST['id_question']){
 		$objSQL -> cols = 'question,id_user,data,answered,flag';
-		$arWheresCol[] = 'id_question';
+		$arWheresCol[] = 'id';
 		$arWheresVal[] = $_REQUEST['id_question']; 
 	} else if($_REQUEST['id_user']){
-		$objSQL -> cols = 'id_question,question,data,answered,flag';	
+		$objSQL -> cols = 'id,question,data,answered,flag';	
 		$arWheresCol[] = 'id_user';
 		$arWheresVal[] = $_REQUEST['id_user'];
 	} else {
-		$objSQL -> cols = 'id_question,question,id_user,answered';
+		$objSQL -> cols = 'id,question,id_user,answered';
 	}
 
 	if(count($arWheresCol)>0)

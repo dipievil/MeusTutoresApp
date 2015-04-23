@@ -1,15 +1,14 @@
 var mtApp = angular.module('mtApp',['ngRoute',
 									'mtApp.Controllers']);
 
-angular.module ('mtApp.Controllers', []);
+//angular.module ('mtApp.Controllers', []);
 //angular.module ('mtApp.Repositories', []);
 
 mtApp.config( function ($routeProvider) {
 	$routeProvider.
 		when('/home', {
 			title: 'home',
-			templateUrl: '../html/home.html',
-			controller: 'mtHomeCtrl'
+			templateUrl: '../html/home.html'
 		})
 		.when('/pergunta', {
 			title: 'newquestion',
@@ -39,4 +38,22 @@ mtApp.config( function ($routeProvider) {
 		.otherwise({
 			redirectTo: '/home'
 		});
+});
+
+angular.module('mtApp').factory('getKey', function($http) {
+    return {
+        getData: function(data) {
+			var key='';
+			return $http({
+				url: '../php/key_gen.php',
+				method: "POST",
+				headers: {'Content-Type': 'application/json'}
+			    }).success(function (data) {
+					return data;
+				})
+				.error(function (data, status, headers, config) {
+					console.log('Erro : ' + status + ' ' + headers);
+				});
+        }
+    }
 });

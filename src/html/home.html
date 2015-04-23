@@ -19,12 +19,14 @@
 								 class="panel-collapse collapse" 
 								 role ="tabpanel" 
 								 aria-labelledby="headquestion">
-								 <div class="panel-body">
-									<div class="row">
-										<div class="col-md-8">
-											Resposta 
+								 <div ng-repeat="answer in perguntasModel.answers">
+									 <div class="panel-body">
+										<div class="row">
+											<div class="col-md-8">
+												{{answer.answer}} (por: {{answer.user}})
+											</div>
 										</div>
-									</div>
+									 </div>
 								 </div>
 							</div>
 						</div>
@@ -34,7 +36,7 @@
 		</div>
 	</div>
 	
-	<div class="alert alert-danger" role="alert">
+	<div class="alert alert-danger ng-hide" role="alert">
 		{{errorMessage}}
 	</div>
 

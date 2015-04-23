@@ -1,6 +1,7 @@
 angular.module('mtApp.Controllers',[])
-	   .controller("mtHomeCtrl", function ($scope, $http)
+	   .controller("mtHomeCtrl", function ($scope, $http, getKey)
 {
+	$scope.genKey = '';	
 	
 	//Paineis dinâmicos
 	$scope.panelClass={
@@ -8,24 +9,27 @@ angular.module('mtApp.Controllers',[])
 		1: "panel-success"
 	}
 	
-	$http.get('../php/list_question.php')
-	     .success(function (data) {
-			$scope.perguntasModel = data;
-			$scope.size = $scope.perguntasModel.length;
-
-			/*
-			if ($scope.perguntasModel.length > 0) {
+	getKey.getData()
+	.success(function(data){
+		$scope.genKey = data.GeneratedKey;
+			
+		if ($scope.genKey.length > 0){
 				
-				// Load the list of Orders, and their Products, that this Customer has ever made.
-				$scope.loadOrders();
-			}
-			*/
-		 })
-		 .error(function (data, status, headers, config) {
-			$scope.errorMessage = "Falha ao realizar a consulta # " + status;
-		 });	
-	
-	console.log = $scope.errorMessage;
+			$http.get('../php/list_	question.php', {
+					params: {
+						key : $scope.genKey
+					}
+				 })
+				 .success(function (data) {
+					$scope.perguntasModel = data;
+					$scope.size = $scope.perguntasModel.length;
+				 })
+				 .error(function (data, status, headers, config) {
+					console.log("Falha ao realizar a consulta # :" + status);
+				 });	
+		}
+	});
+
 });	
 
 
