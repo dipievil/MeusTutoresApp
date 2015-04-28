@@ -21,11 +21,21 @@
 		private $strQuery;
 		private $DEBUGMODE = false;
 
-		//Constructor
-		// Name:	Classe Query Consult
-		// Desc:	Realiza as consultas ao banco de dados
-		// Date:    20/04/2015		
-		function queryConsult($tableName='',
+	
+		/**
+		 * Constructor : inicializa as variáveis
+		 * @param string $tableName Nome da tabela
+		 * @param string $whereBasicsCol Lista de colunas básicas na busca separadas por vírgula
+		 * @param string $whereBasicsVal Lista de valores básicas na busca separados por vírgula
+		 * @param string $cols Lista de colunas separadas por vírgula
+		 * @param string $wheresCol Colunas da busca
+		 * @param string $wheresVal Valores da busca
+		 * @param string $sortColumns Colunas para ordenar
+		 * @param string $sortAscending Ordem alfabética
+		 * @param string $limit Número de resultados
+		 * 
+		 */		
+		public function __construct($tableName='',
 						  $whereBasicsCol='',
 						  $whereBasicsVal='',
 						  $cols='',
@@ -53,7 +63,27 @@
 			}
 		}
 		
-		//Insere as Joins quando necessário
+		/**
+		 * Limpa as propriedades principais
+		 */		
+		public function ResetClass(){
+			$this->whereBasicsCol = null; 	
+			$this->whereBasicsVal = null;
+			$this->cols = null;
+			$this->wheresCol = null;
+			$this->wheresVal = null;
+			$this->tableName = null;	
+			$this->sqlSortColumns = null;
+			$this->sqlSortAscending = true;
+		}
+		
+		/**
+		 *  Insere as Joins quando necessário
+		 * @param array $arCols Array de colunas
+		 * @param string $query Querie a ser alterada
+		 * @param array $tableName Nome da tabela a receber os joins
+		 * @return string Retorna a uma querie com os joins
+		 */
 		private function InserJoins($arCols,$query = null,$tableName = null){
 			$db = new MySQL();			
 			if($tableName == null){
@@ -113,8 +143,14 @@
 				return $sqlQuery;
 			}
 		}
+
 		
-		//Adiciona os dados da subtabela
+		/**
+		 * [STATIC] Adiciona os dados da subtabela
+		 * @param string $subtable Nome da subtabela
+		 * @param array $arQuery Array com resultados da última querie
+		 * @return array Retorna o arry da querie com os resultados da subtabela
+		 */		
 		private function SubTableAdd($subtable, $arQuery){
 			
 			$db = new MySQL();
@@ -175,8 +211,20 @@
 			return $arNewQuery;
 		}
 		
-		//Roda a query caso os pre-requisitos 
-		//estejam preenchidos
+		/**
+		 * [STATIC] Roda uma query de insert
+		 * @return string Retorna o json com o resultado
+		 */			
+		public function insertQuery(){
+			//TODO
+		}
+		
+		/**
+		 * Roda uma query de select
+		 * @param string $subtable Nome da subtabela
+		 * @param bool $DEBUG True se deseja debugar
+		 * @return string Retorna o json com o resultado
+		 */			
 		function execQuery($subtable = null,$DEBUG = null){
 			
 			$db = new MySQL();
