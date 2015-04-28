@@ -11,7 +11,7 @@
 									<div class="col-md-12 clicable" 
 										 data-toggle="collapse" 
 										 data-target="{{'#collapse' + $index}}" >
-										<b>{{question.question}}</b> (por: <a href="../Perfil">{{question.user}}</a>)
+										<b>{{question.question}}</b> (por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em {{answer.data}})
 									</div>
 								</div>
 							</div>
@@ -23,7 +23,7 @@
 									 <div class="panel-body">
 										<div class="row">
 											<div class="col-md-8">
-												{{answer.answer}} (por: {{answer.user}})
+												{{answer.answer}} (por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})
 											</div>
 										</div>
 									 </div>

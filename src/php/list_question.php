@@ -5,12 +5,6 @@
 
 	$objSQL = new queryConsult();
 	
-	//DEBUG//
-	//$date = getdate();
-	//$apppass = 'v5b6n7';
-	//$objSQL -> accessKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);			
-	//DEBUG//	
-	
 	$objSQL->tableName = 'question';
 	$objSQL->whereBasicsCol = 'ativo';
 	$objSQL->whereBasicsVal = '1';

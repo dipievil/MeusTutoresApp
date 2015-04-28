@@ -12,8 +12,7 @@ mtApp.config( function ($routeProvider) {
 		})
 		.when('/pergunta', {
 			title: 'newquestion',
-			templateUrl: '../html/question.html',
-			controller: 'mtQuestionController'
+			templateUrl: '../html/question.html'
 		})
 		.when('/resposta', {
 			title: 'answer',

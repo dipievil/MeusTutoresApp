@@ -165,6 +165,8 @@ class MySQL
                     } else {
 						if($tableName != null)
 							$sql .= ", " . $quote . $tableName . $quote . '.' . $quote . $value . $quote;
+						else
+							$sql .= ", " .$quote . $value . $quote;
                     }
                     if ($showAlias && is_string($key) && (! empty($key))) {
                         $sql .= ' AS "' . $key . '"';
@@ -216,10 +218,13 @@ class MySQL
      * @return string Returns a SQL INSERT statement
      */
     static public function BuildSQLInsert($tableName, $valuesArray) {
+		
         $columns = self::BuildSQLColumns(array_keys($valuesArray));
         $values = self::BuildSQLColumns($valuesArray, false, false);
+
         $sql = "INSERT INTO `" . $tableName .
                "` (" . $columns . ") VALUES (" . $values . ")";
+
         return $sql;
     }
 

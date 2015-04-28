@@ -87,7 +87,8 @@
 		private function InserJoins($arCols,$query = null,$tableName = null){
 			$db = new MySQL();			
 			if($tableName == null){
-				$tableName = $this->tableName;	
+				$tableName = $this->tableName;
+				
 			}
 
 			if(strlen($query)<1)
@@ -205,7 +206,7 @@
 					}
 				}
 			}
-			
+						
 			$arNewQuery = $arQuery;
 
 			return $arNewQuery;
@@ -216,7 +217,31 @@
 		 * @return string Retorna o json com o resultado
 		 */			
 		public function insertQuery(){
-			//TODO
+			
+			$db = new MySQL();
+			$strInsertID=0;
+
+			if(strlen($this->whereBasicsCol)>0 && strlen($this->whereBasicsVal)>0){
+				$arCols = explode(',',$this->whereBasicsCol);
+				$arVals = explode(',',$this->whereBasicsVal);
+				foreach($arCols as $col){
+					$arColsR[] = $col;
+				}
+				foreach($arVals as $col){
+					$arValsR[] = $col;
+				}
+				
+				$arValuesToAdd = array_combine($arColsR,$arValsR);
+				
+				$strSqlInsert = $db->BuildSQLInsert($this->tableName,$arValuesToAdd);
+				
+				if(!$db->Query($strSqlInsert)){
+					$strInsertID = $db->Error();
+				} else {
+					$strInsertID = $db->GetLastInsertID();
+				}
+			}
+			return $strInsertID;
 		}
 		
 		/**
@@ -287,7 +312,6 @@
 						
 						$arQuery = $db->RecordsArray();
 						
-						
 						if(strlen($subtable)>0){
 							//Adiciona as subtabelas no array final							
 							$arQuery = $this->SubTableAdd($subtable,$arQuery);
@@ -305,7 +329,6 @@
 			} else {
 				$jsonQuery = '{"error":"Accesskey check fail"}';
 			}
-			
 			
 			return $jsonQuery;
 				

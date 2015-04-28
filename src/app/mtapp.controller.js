@@ -1,4 +1,30 @@
 angular.module('mtApp.Controllers',[])
+	   .controller("mtQuestionController", function ($scope, $http, getKey)
+{
+	
+	$scope.errorMessage = '';
+	$scope.viewerror = false;
+	
+	$scope.SendQuestion = function() {
+ 
+		$http.post('../php/send_question.php', {'formQuestion': $scope.formQuestion}
+		).success(function(data, status, headers, config) {
+			if (data.message != '')
+			{
+				$scope.errorMessage = data.message;
+				$scope.viewerror = true;
+				if(data.error.length > 0)
+					console.log(data.error);
+			}
+		}).error(function(data, status) { 
+			$scope.errorMessage = status;
+			$scope.viewerror = true;
+		});
+	}
+	
+});
+
+angular.module('mtApp.Controllers',[])
 	   .controller("mtHomeCtrl", function ($scope, $http, getKey)
 {
 	$scope.genKey = '';	
