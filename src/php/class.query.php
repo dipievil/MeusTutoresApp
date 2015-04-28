@@ -17,6 +17,9 @@
 		public $sqlSortColumns;		//Lista de colunas para ordenar
 		public $sqlSortAscending;	//Ordem das colunas
 		public $sqlLimit;			//Numero de linhas para busca
+		
+		private $strQuery;
+		private $DEBUGMODE = false;
 
 		//Constructor
 		// Name:	Classe Query Consult
@@ -50,15 +53,139 @@
 			}
 		}
 		
+		//Insere as Joins quando necessário
+		private function InserJoins($arCols,$query = null,$tableName = null){
+			$db = new MySQL();			
+			if($tableName == null){
+				$tableName = $this->tableName;	
+			}
+
+			if(strlen($query)<1)
+				$sqlQuery = $this->strQuery;
+			else 
+				$sqlQuery = $query;
+			
+			
+			//JOINs
+			// Verifica se a coluna possui sufixo '_id'
+			// e substitui pelo valor da tabela correspondente
+			foreach ($arCols as $coluna){
+				if(strpos($coluna,'id_') !== false && $coluna != 'id_'.$tableName){
+					//Nome da tabela do Join
+					$tableCheck = str_replace('id_','',$coluna);
+					
+					//Altera coluna do ID pela coluna com valor
+					$keyToChange = array_search($coluna,$arCols);
+					
+					//Coluna para alterar
+					$arColChange = $db->GetColumnNames($tableCheck);
+					
+					//Adiciona a nova coluna ao array
+					//$arCols[] = $arColChange[1];
+					
+					$strQuerySearch = '`'.$tableName.'`.`'.$coluna.'`';
+					$strQueryReplace = '`'.$tableName.'`.`'.$coluna.'`,`'.$tableCheck.'`.`'.$arColChange[1].'`';
+					
+					if($this->DEBUGMODE)
+					echo "\n\nQuerie antes Join: ".$sqlQuery;
+					
+					//Altera a query
+					$pos = strpos($sqlQuery,$strQuerySearch);
+					if ($pos !== false) {
+						$sqlQuery = substr_replace($sqlQuery,$strQueryReplace,$pos,strlen($strQuerySearch));
+					}
+					
+					//Adiciona o Join da tabela se ainda não tem
+					if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == null){
+						
+						$joinSQL = ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
+						$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
+					}
+					
+					if($this->DEBUGMODE)
+					echo "\n\nQuerie depois Join : ".$sqlQuery;
+				}
+			}
+			
+			if($query == null){
+				$this->strQuery = $sqlQuery;
+			} else {
+				return $sqlQuery;
+			}
+		}
+		
+		//Adiciona os dados da subtabela
+		private function SubTableAdd($subtable, $arQuery){
+			
+			$db = new MySQL();
+			$arSubTable = explode(",",$subtable);		
+			$arNewQuery = null;
+			$tableName = $this->tableName;
+				
+			//Cada uma das tabelas
+			foreach($arSubTable as $xtTable){
+				
+				//Verifica o valor da tabela
+				for($i=0;$i<count($arQuery);$i++){
+					
+					//Para cada valor de id, adiciona um novo ramo
+					
+					//Nome da subtabela
+					$xtTblName = $xtTable;
+					
+					//Chave da subtabela na tabela atual
+					$idvalue = $arQuery[$i]['id'];
+					
+					//Campo da tabela referenciado
+					$xtTblWheres = array('id_'.$tableName=>$idvalue);
+					
+					//Joins da Subtabela	
+					$arxtColNames = $db->GetColumnNames($xtTblName);
+					
+					$sqlxtQuery = $db->BuildSQLSelect($xtTblName,
+											$xtTblWheres,
+											$arxtColNames,
+											'data',
+											true,
+											null);
+											
+												
+					if($this->DEBUGMODE){
+						echo "\n\n subtabela BEFORE :\n ";
+					}
+						
+					$sqlxtQuery = $this->inserJoins($arxtColNames, $sqlxtQuery, $xtTblName);
+						
+					if($this->DEBUGMODE)
+						echo "\n subtabela AFTER: \n";	
+
+
+					//Adiciona subconsulta ao array final
+					if($db->Query($sqlxtQuery)){
+						$arQuerySub = $db->RecordsArray();
+						$arQuery[$i]['tbl'.$xtTblName] = $arQuerySub;
+					} else {
+						$arQuery = array("['Erro na subtabela':'".$db->Error()."']");
+					}
+				}
+			}
+			
+			$arNewQuery = $arQuery;
+
+			return $arNewQuery;
+		}
+		
 		//Roda a query caso os pre-requisitos 
 		//estejam preenchidos
 		function execQuery($subtable = null,$DEBUG = null){
 			
 			$db = new MySQL();
+			if($DEBUG)
+				$this->DEBUGMODE = true;
 			
 			//Deve corresponder a chave de acesso
 			
-			if($this->transactionKey == $this->accessKey || $DEBUG != null){
+			if($this->transactionKey == $this->accessKey || $this->DEBUGMODE != null){
 			
 				//Deve ter, pelo menos, o nome da tabela
 				if (strlen($this->tableName)>0){
@@ -100,72 +227,25 @@
 													$this->sqlSortColumns,
 													$this->sqlSortAscending,
 													$this->sqlLimit);
+													
+					$this->strQuery = $sqlQuery;													
 					
+					//Trata os JOINS
+					$this->InserJoins($arCols);
 					
-					//JOINs
-					// Verifica se a coluna possui sufixo '_id'
-					// e substitui pelo valor da tabela correspondente
-					foreach ($arCols as $coluna){
-						if(strpos($coluna,'id_') !== false && $coluna != 'id_'.$tableName){
-							//Nome da tabela do Join
-							$tableCheck = str_replace('id_','',$coluna);
-							
-							//Altera coluna do ID pela coluna com valor
-							$keyToChange = array_search($coluna,$arCols);
-							$arColChange = $db->GetColumnNames($tableCheck);
-							$arCols[$keyToChange] = $arColChange[1];
-							$sqlQuery = str_replace('`'.$tableName.'`.`'.$coluna.'`','`'.$tableCheck.'`.`'.$arColChange[1].'`',$sqlQuery);
-							
-							//Adiciona o Join da tabela se ainda não tem
-							if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == null){
-								
-								$joinSQL = ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
-								$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
-							}
-						}
-					}
-					
-					if($DEBUG != null)
-						echo $sqlQuery."\n\n";
-					
-					//$db->Query($sqlQuery);
-					if(!$db->Query($sqlQuery)){
+					if(!$db->Query($this->strQuery)){
 						$jsonQuery = "{'Error':'".$db->Error()."'}";
 					} else {
 						
+						$arQuery = $db->RecordsArray();
 						
-						//Adiciona as subtabelas no array final
-						$arSubTable = explode(",",'subtable');
-						if(count($arSubTable)>0){
-							//Converte resultados para array
-							$arQuery = $db->RecordsArray();
-							
-							//Cada uma das tabelas
-							foreach($arSubTable as $xtTable){
-								
-								//Verifica o valor da tabela
-								foreach($arQuery as $valueTable){
-									
-									//Para cada valor de id, adiciona um novo ramo
-									//Nome da subtabela
-									$xtTblName = $xtTable;
-									//Campo da tabela referenciado
-									//$xtTblWheres = array('id_'.$tableName=>$valueTable);
-									
-									$sqlQuery = $db->BuildSQLSelect($xtTblName,
-															$xtTblWheres,
-															null,
-															'data',
-															true,
-															null);	
-									
-								}
-							}
-							$jsonQuery = json_encode($arQuery);
-						} else {
-							$jsonQuery = $db->GetJSON();
+						
+						if(strlen($subtable)>0){
+							//Adiciona as subtabelas no array final							
+							$arQuery = $this->SubTableAdd($subtable,$arQuery);
 						}
 						
+						$jsonQuery = json_encode($arQuery);
 						
 						if($jsonQuery == null)
 							$jsonQuery = '{"":""}';
@@ -173,7 +253,6 @@
 					
 				} else {
 					$jsonQuery = '{"":""}';
-				
 				}
 			} else {
 				$jsonQuery = '{"error":"Accesskey check fail"}';

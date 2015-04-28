@@ -45,7 +45,7 @@
 	if(count($arWheresVal)>0)
 		$objSQL -> wheresVal = implode($arWheresVal); 
 	
-	$strQuery = $objSQL->execQuery('answer', true);
+	$strQuery = $objSQL->execQuery('answer');
 
 	header('Content-Type: application/json; charset=utf-8');	
 	echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
