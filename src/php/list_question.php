@@ -31,7 +31,7 @@
 		$arWheresCol[] = 'id_user';
 		$arWheresVal[] = $_REQUEST['id_user'];
 	} else {
-		$objSQL -> cols = 'id,question,id_user,answered';
+		$objSQL -> cols = 'id,question,id_user,answered,data';
 	}
 
 	if(count($arWheresCol)>0)

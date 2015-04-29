@@ -1,16 +1,11 @@
 <?
-		include("../class/class.mysql.php");
+
+	include("../class/class.mysql.php");
 	include("../php/config.php");
 	include("../php/class.query.php");
 
 	$objSQL = new queryConsult();
 	
-	//DEBUG//
-	// $date = getdate();
-	// $apppass = 'v5b6n7';
-	// $objSQL -> accessKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);			
-	//DEBUG//	
-
 	$objSQL->tableName = 'answer';
 	$objSQL->whereBasicsCol = 'ativo';
 	$objSQL->whereBasicsVal = '1';

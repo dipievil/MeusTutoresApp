@@ -26,13 +26,11 @@ angular.module('mtApp.Controllers',[])
 })
 	   .controller("mtQuestionController", function ($scope, $http, $window, getKey)
 {
-	
 	getKey.getData()
 	.success(function(data){
 		$scope.genKey = data.GeneratedKey;
 			
 		if ($scope.genKey.length > 0){
-	
 			
 			$scope.viewerror = false;
 			$scope.SendQuestion = function() {
@@ -45,22 +43,19 @@ angular.module('mtApp.Controllers',[])
 					data: parameters
 				})
 				.success(function(data, status, headers, config) {
-					
-						//Paineis dinâmicos
-					$scope.panelClass={
-						0: "alert-danger",
-						1: "alert-success"
-					}
-					
 					if (data.message != '')
 					{
 						$scope.viewerror = true;
 						$scope.errorMessage = data.message;
-						if(data.id > 0)
-							$scope.panelClass[0]='alert-danger';
 						
+						if(data.id != undefined && data.id > 0){
+							$scope.alertClass = 'alert-success';
+							console.log($scope.alertClass);
+						} else {
+							$scope.alertClass='alert-danger';
+						}
+							
 					}
-					
 					
 				}).error(function(data, status) { 
 					$scope.errorMessage = status;
@@ -74,17 +69,17 @@ angular.module('mtApp.Controllers',[])
 	   .controller("mtHomeCtrl", function ($scope, $http, getKey)
 {
 	$scope.genKey = '';	
-	
-	//Paineis dinâmicos
-	$scope.panelClass={
-		0: "panel-danger",
-		1: "panel-success"
-	}
+
 	
 	getKey.getData()
 	.success(function(data){
 		$scope.genKey = data.GeneratedKey;
-			
+					
+		//Paineis dinâmicos
+		$scope.panelClass={
+			0: "panel-danger",
+			1: "panel-success"
+		}
 		if ($scope.genKey.length > 0){
 				
 			$http.get('../php/list_	question.php', {

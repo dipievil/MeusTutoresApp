@@ -11,7 +11,9 @@
 									<div class="col-md-12 clicable" 
 										 data-toggle="collapse" 
 										 data-target="{{'#collapse' + $index}}" >
-										<b>{{question.question}}</b> (por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em {{answer.data}})
+										 <div ng-class="wellclass">
+										 <p><b>{{question.question}}</b> <small>(por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em {{answer.data}})</small></p>
+										 </div>
 									</div>
 								</div>
 							</div>
@@ -23,7 +25,22 @@
 									 <div class="panel-body">
 										<div class="row">
 											<div class="col-md-8">
-												{{answer.answer}} (por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})
+												{{answer.answer}} <small>(por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})</small>
+											</div>
+											<div class="col-md-4 text-right">
+												<div class="btn-group btn-group-xs" role="group" aria-label="...">
+													<button type="button" class="btn btn-primary btn-lg">
+													  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Correto
+													</button>		
+
+													<button type="button" class="btn btn-danger btn-lg">
+													  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Errado
+													</button>								
+
+													<button type="button" class="btn btn-warning btn-lg">
+													  <span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Denunciar
+													</button>
+												</div>	
 											</div>
 										</div>
 									 </div>
