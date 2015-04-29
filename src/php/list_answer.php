@@ -35,6 +35,12 @@
 		$objSQL -> cols = 'id,id_user,id_question,votes,answer,data,flag';
 	}	
 	
+	if(count($arWheresCol)>0)
+		$objSQL -> wheresCol = implode($arWheresCol);
+	if(count($arWheresVal)>0)
+		$objSQL -> wheresVal = implode($arWheresVal); 
+		
+	
 	$strQuery = $objSQL->execQuery();
 
 	header('Content-Type: application/json; charset=utf-8');	

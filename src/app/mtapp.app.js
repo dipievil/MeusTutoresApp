@@ -1,5 +1,4 @@
-var mtApp = angular.module('mtApp',['ngRoute',
-									'mtApp.Controllers']);
+var mtApp = angular.module('mtApp',['ngRoute', 'mtApp.Controllers']);
 
 //angular.module ('mtApp.Controllers', []);
 //angular.module ('mtApp.Repositories', []);
@@ -11,7 +10,7 @@ mtApp.config( function ($routeProvider) {
 			templateUrl: '../html/home.html'
 		})
 		.when('/pergunta', {
-			title: 'newquestion',
+			title: 'pergunta',
 			templateUrl: '../html/question.html'
 		})
 		.when('/resposta', {

@@ -17,6 +17,7 @@
 		public $sqlSortColumns;		//Lista de colunas para ordenar
 		public $sqlSortAscending;	//Ordem das colunas
 		public $sqlLimit;			//Numero de linhas para busca
+		public $sqlOperator; 		//Operador diferenciado para o SQL nos wheres
 		
 		private $strQuery;
 		private $DEBUGMODE = false;
@@ -51,6 +52,7 @@
 			$this->wheresCol = $wheresCol;      	
 			$this->wheresVal = $wheresVal;
 			$this->tableName = $tableName;
+			$this->sqlOperator = null;
 			$config = new appConfig();
 			$this->transactionKey = $config->transactionKey;
 			
@@ -280,9 +282,6 @@
 						$arWheres = array_combine($arWhereCol,$arWhereVal);
 					}
 					
-					//Junta os arrays
-					$arWheres = array_merge($arWhereBasics,$arWheres);
-									
 					//Filtros das colunas
 					$arCols = array();
 				
@@ -292,14 +291,49 @@
 						$arCols = explode(',',$this->cols);
 					}else{
 						$arCols = $db->GetColumnNames($tableName);
-					}
+					}	
 					
-					$sqlQuery = $db->BuildSQLSelect($tableName,
-													$arWheres,
-													$arCols,
-													$this->sqlSortColumns,
-													$this->sqlSortAscending,
-													$this->sqlLimit);
+					//Junta os arrays
+					if($this->sqlOperator == null){
+						$arWheres = array_merge($arWhereBasics,$arWheres);
+						
+						$sqlQuery = $db->BuildSQLSelect($tableName,
+														$arWheres,
+														$arCols,
+														$this->sqlSortColumns,
+														$this->sqlSortAscending,
+														$this->sqlLimit);						
+						
+					} else {
+						
+						$sqlQuery = $db->BuildSQLSelect($tableName,
+								$arWhereBasics,
+								$arCols,
+								$this->sqlSortColumns,
+								$this->sqlSortAscending,
+								$this->sqlLimit);
+						
+						$arWhereCol = explode(',',$this->wheresCol);
+						$arWhereVal = explode(',',$this->wheresVal);
+
+						$op = $this->sqlOperator;
+						$strWhereOperator = ' AND (';
+						
+						for($i=0;$i<count($arWhereCol);$i++){
+							if($i<1){
+								$strWhereOperator .= '`'.$tableName.'`.`'.$arWhereCol[$i].'` = '.$arWhereVal[$i].'';
+							} else {
+								$strWhereOperator .= ' '.$op.' `'.$tableName.'`.`'.$arWhereCol[$i].'` = '.$arWhereVal[$i].'';
+							}
+						}
+						$strWhereOperator .= ')';
+						
+
+						$sqlQuery = str_replace(" ORDER BY",$strWhereOperator." ORDER BY",$sqlQuery);
+						
+					}
+									
+
 													
 					$this->strQuery = $sqlQuery;													
 					

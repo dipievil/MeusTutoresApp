@@ -1,30 +1,76 @@
 angular.module('mtApp.Controllers',[])
-	   .controller("mtQuestionController", function ($scope, $http, getKey)
+	   .controller("ctrlMainMenu", function ($scope, $http, getKey)
+{
+	$scope.menuModel = '';
+	$scope.genKey = '';
+	
+	getKey.getData()
+	.success(function(data){
+		$scope.genKey = data.GeneratedKey;
+			
+		if ($scope.genKey.length > 0){
+	
+			$http.get('../php/list_menu.php', {
+					params: {
+						key : $scope.genKey
+					}
+				 })
+				 .success(function (data, status, headers, config) {
+					$scope.menuModel = data;
+				 })
+				 .error(function (data, status, headers, config) {
+					console.log("Falha ao realizar a consulta # :" + status);
+				 });
+		}
+	});	
+})
+	   .controller("mtQuestionController", function ($scope, $http, $window, getKey)
 {
 	
-	$scope.errorMessage = '';
-	$scope.viewerror = false;
+	getKey.getData()
+	.success(function(data){
+		$scope.genKey = data.GeneratedKey;
+			
+		if ($scope.genKey.length > 0){
 	
-	$scope.SendQuestion = function() {
- 
-		$http.post('../php/send_question.php', {'formQuestion': $scope.formQuestion}
-		).success(function(data, status, headers, config) {
-			if (data.message != '')
-			{
-				$scope.errorMessage = data.message;
-				$scope.viewerror = true;
-				if(data.error.length > 0)
+			
+			$scope.viewerror = false;
+			$scope.SendQuestion = function() {
+			
+				var parameters = $.param({'key': $scope.genKey,'formQuestion': $scope.formQuestion});
+				$http({
+					url: '../php/send_question.php',
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					data: parameters
+				})
+				.success(function(data, status, headers, config) {
+					
+						//Paineis dinâmicos
+					$scope.panelClass={
+						0: "alert-danger",
+						1: "alert-success"
+					}
+					
+					if (data.message != '')
+					{
+						$scope.viewerror = true;
+						$scope.errorMessage = data.message;
+						if(data.id > 0)
+							$scope.panelClass[0]='alert-danger';
+						
+					}
+					
+					
+				}).error(function(data, status) { 
+					$scope.errorMessage = status;
 					console.log(data.error);
+					$scope.viewerror = true;
+				});
 			}
-		}).error(function(data, status) { 
-			$scope.errorMessage = status;
-			$scope.viewerror = true;
-		});
-	}
-	
-});
-
-angular.module('mtApp.Controllers',[])
+		}
+	});
+})
 	   .controller("mtHomeCtrl", function ($scope, $http, getKey)
 {
 	$scope.genKey = '';	
@@ -55,8 +101,7 @@ angular.module('mtApp.Controllers',[])
 				 });	
 		}
 	});
+});
 
-});	
-
-
+	
 

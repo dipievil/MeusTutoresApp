@@ -20,31 +20,29 @@
     <![endif]-->
   </head>
   <body ng-app="mtApp">
-	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container-fluid">
-			<!-- MOBILE -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Mudar navegação</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">mtapp</a>
-			</div>
 
-			<!-- TOPBAR -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="/home">Home <span class="sr-only">(atual)</span></a></li>
-					<li><a href="/pergunta">Nova pergunta</a></li>
-					<li><a href="/perfil">Perfil</a></li>
-					<li><a href="/sair">Sair</a></li>
-					<li><a href="/login">Entrar</a></li>
-				</ul>
+		<nav class="navbar navbar-default navbar-fixed-top" ng-controller="ctrlMainMenu">
+			<div class="container-fluid">
+				<!-- MOBILE -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Mudar navegação</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#/home">mtapp</a>
+				</div>
+
+				<!-- TOPBAR -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav" ng-repeat="item in menuModel">
+						<li class="" title="{{item.label}}"><a href="#/{{item.url}}">{{item.label}} <span class="sr-only">(atual)</span></a></li>
+					</ul>
+				</div>
 			</div>
-		</div>
-	</nav>
+		</nav>
+		
 	<div class="container">
 	
 	<div id="main">
