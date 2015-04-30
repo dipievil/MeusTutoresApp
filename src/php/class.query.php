@@ -181,10 +181,16 @@
 					//Joins da Subtabela	
 					$arxtColNames = $db->GetColumnNames($xtTblName);
 					
+					if(array_search('date',$arxtColNames)){
+						$colOrder = 'date';
+					} else {
+						$colOrder = null;
+					}
+					
 					$sqlxtQuery = $db->BuildSQLSelect($xtTblName,
 											$xtTblWheres,
 											$arxtColNames,
-											'data',
+											$colOrder,
 											true,
 											null);
 											
@@ -204,7 +210,7 @@
 						$arQuerySub = $db->RecordsArray();
 						$arQuery[$i]['tbl'.$xtTblName] = $arQuerySub;
 					} else {
-						$arQuery = array("['Erro na subtabela':'".$db->Error()."']");
+						$arQuery = array('error'=>str_replace('\"', '\'',$db->Error()));
 					}
 				}
 			}
@@ -238,7 +244,7 @@
 				$strSqlInsert = $db->BuildSQLInsert($this->tableName,$arValuesToAdd);
 				
 				if(!$db->Query($strSqlInsert)){
-					$strInsertID = $db->Error();
+					$strInsertID = str_replace('\"', '\'',$db->Error());
 				} else {
 					$strInsertID = $db->GetLastInsertID();
 				}
@@ -341,7 +347,7 @@
 					$this->InserJoins($arCols);
 					
 					if(!$db->Query($this->strQuery)){
-						$jsonQuery = "{'Error':'".$db->Error()."'}";
+						$jsonQuery = '{"error":"'.str_replace('\"', '\'',$db->Error()).'"}';
 					} else {
 						
 						$arQuery = $db->RecordsArray();

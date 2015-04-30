@@ -14,20 +14,20 @@
 	if($_REQUEST['sortcolumns'])
 		$objSQL->sqlSortColumns = $_REQUEST[$sortColumns];
 	else
-		$objSQL->sqlSortColumns = 'data';
+		$objSQL->sqlSortColumns = 'date';
 	
 	$objSQL->sqlSortAscending = 'DESC';
 	
 	if($_REQUEST['id_question']){
-		$objSQL -> cols = 'id,id_user,votes,answer,data,flag';
+		$objSQL -> cols = 'id,id_user,votes,answer,date,flag';
 		$arWheresCol[] = 'id_question';
 		$arWheresVal[] = $_REQUEST['id_question']; 
 	} else if($_REQUEST['id_answer']){
-		$objSQL -> cols = 'id_user,id_question,votes,answer,data,flag';	
+		$objSQL -> cols = 'id_user,id_question,votes,answer,date,flag';	
 		$arWheresCol[] = 'id';
 		$arWheresVal[] = $_REQUEST['id_answer'];
 	} else {
-		$objSQL -> cols = 'id,id_user,id_question,votes,answer,data,flag';
+		$objSQL -> cols = 'id,id_user,id_question,votes,answer,date,flag';
 	}	
 	
 	if(count($arWheresCol)>0)

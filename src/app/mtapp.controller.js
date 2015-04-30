@@ -66,7 +66,7 @@ angular.module('mtApp.Controllers',[])
 		}
 	});
 })
-	   .controller("mtHomeCtrl", function ($scope, $http, getKey)
+	   .controller("mtHomeCtrl", function ($scope, $http, getKey, serviceData)
 {
 	$scope.genKey = '';	
 
@@ -81,6 +81,7 @@ angular.module('mtApp.Controllers',[])
 			1: "panel-success"
 		}
 		if ($scope.genKey.length > 0){
+			serviceData.sendValue('show');
 				
 			$http.get('../php/list_	question.php', {
 					params: {
@@ -88,14 +89,33 @@ angular.module('mtApp.Controllers',[])
 					}
 				 })
 				 .success(function (data) {
+					 if(data.error != undefined)
+						 console.log(data.erro);
 					$scope.perguntasModel = data;
-					$scope.size = $scope.perguntasModel.length;
+					
+					//Desativa o modal
+						
+					serviceData.sendValue('close');
 				 })
 				 .error(function (data, status, headers, config) {
 					console.log("Falha ao realizar a consulta # :" + status);
 				 });	
 		}
 	});
+})
+	   .controller("ctrlModal", function ($scope, $http, serviceData)
+{
+	$scope.showModal = 'show';
+	
+	$scope.$on('receiveValue', function(event, message) {
+		console.log('valor '+message);
+        if(message = 'close'){
+			$scope.showModal = '';	
+		} else {
+			$scope.showModal = 'show';
+		}
+		
+    });
 });
 
 	

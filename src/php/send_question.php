@@ -8,12 +8,6 @@ $jsonResult = '[{"":""}]';
 session_start();
 	
 //DEBUG
-// $formQuestion = $_REQUEST["formQuestion"];
-// $accessKey = $_REQUEST['key'];
-// $idUser = "1";
-// $date = getdate();
-// $apppass = 'v5b6n7';
-// $accessKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);	
 	$_SESSION['userid'] = '1';		
 //DEBUG	
 

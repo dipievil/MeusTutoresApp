@@ -38,7 +38,8 @@ mtApp.config( function ($routeProvider) {
 		});
 });
 
-angular.module('mtApp').factory('getKey', function($http) {
+angular.module('mtApp')
+	.factory('getKey', function($http) {
     return {
         getData: function(data) {
 			var key='';
@@ -54,4 +55,11 @@ angular.module('mtApp').factory('getKey', function($http) {
 				});
         }
     }
+})
+	.factory('serviceData', function($rootScope) {
+    return {
+        sendValue: function(msg) {
+            $rootScope.$broadcast('receiveValue', msg); 
+        }
+    };
 });
