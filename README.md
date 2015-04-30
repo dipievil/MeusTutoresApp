@@ -5,17 +5,17 @@ Contribuições são bem vindas!
 
 Tecnologias:
 
-*Angular.js
+**Angular.js**
 
-*PHP
+**PHP**
 
-*MySQL
+**MySQL**
 
-*HTML5
+**HTML5**
 
-*Jquery
+**Jquery**
 
-*Bootstrap
+**Bootstrap**
 
 
 Ambiente dev:
