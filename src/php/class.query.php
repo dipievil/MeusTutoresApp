@@ -5,14 +5,14 @@
 	// Date:    20/04/2015
 	class queryConsult {
 		
-		public $whereBasicsCol; 	//Condição where caso não tenha nenhuma
+		public $whereBasicsCol; 	//Condiï¿½ï¿½o where caso nï¿½o tenha nenhuma
 		public $whereBasicsVal;
 		public $cols;		  		//Colunas a serem exibidas em um select
-		public $wheresCol;      	//Condição where da query
+		public $wheresCol;      	//Condiï¿½ï¿½o where da query
 		public $wheresVal;
 		public $tableName;   		//Nome da tabela
 		private $transactionKey;	//Chave interna de controle
-		public $accessKey;			//Chave de acesso enviada pelo usuário
+		public $accessKey;			//Chave de acesso enviada pelo usuï¿½rio
 
 		public $sqlSortColumns;		//Lista de colunas para ordenar
 		public $sqlSortAscending;	//Ordem das colunas
@@ -24,16 +24,16 @@
 
 	
 		/**
-		 * Constructor : inicializa as variáveis
+		 * Constructor : inicializa as variï¿½veis
 		 * @param string $tableName Nome da tabela
-		 * @param string $whereBasicsCol Lista de colunas básicas na busca separadas por vírgula
-		 * @param string $whereBasicsVal Lista de valores básicas na busca separados por vírgula
-		 * @param string $cols Lista de colunas separadas por vírgula
+		 * @param string $whereBasicsCol Lista de colunas bï¿½sicas na busca separadas por vï¿½rgula
+		 * @param string $whereBasicsVal Lista de valores bï¿½sicas na busca separados por vï¿½rgula
+		 * @param string $cols Lista de colunas separadas por vï¿½rgula
 		 * @param string $wheresCol Colunas da busca
 		 * @param string $wheresVal Valores da busca
 		 * @param string $sortColumns Colunas para ordenar
-		 * @param string $sortAscending Ordem alfabética
-		 * @param string $limit Número de resultados
+		 * @param string $sortAscending Ordem alfabï¿½tica
+		 * @param string $limit Nï¿½mero de resultados
 		 * 
 		 */		
 		public function __construct($tableName='',
@@ -80,7 +80,58 @@
 		}
 		
 		/**
-		 *  Insere as Joins quando necessário
+		 *
+		 *  Funï¿½ï¿½o que buscas permissï¿½es e printa as mesmas como 
+		 *	@param string $id_user ID do usuï¿½rio
+		 *  @param string $key chave de acesso aos dados
+		 *  @param string 
+		 *  @param string 
+		 *  @return boolean True se gerou com sucesso
+		 **/
+		 
+		public function  GetPremissions($key,
+										$id_user = null,
+										$permiteResp = FALSE,
+										$permiteVotar = FALSE,
+										$permitePerguntar = FALSE
+										){
+			
+			//busca configuraï¿½ï¿½es
+			$config = new appConfig();
+			$transactionKey = $config->transactionKey;
+			
+			$nivelUser = 0;
+			//Array default de configuraÃ§Ã£o
+			$arPermissions = array('resp'=>false,
+								   'vota'=>false,
+								   'denuncia'=>false,
+								   'perguntar'=>false
+								   );
+								   
+			
+			if($transactionKey == $key) {
+				
+				if($id_user){
+					//Possui usuÃ¡rio
+					$this->strQuery = 'SELECT nivel FROM user WHERE id_user = '.$id_user;
+								
+				} else {
+					//NÃ£o possui usuÃ¡rio
+					$arPermissions['resp'] = false;
+					
+				}
+			} else {
+				$arPermissions['error'] = 'Falha ao buscar registros';
+			}
+			
+			
+			return $arPermissions;
+		}
+		 
+		 
+		
+		/**
+		 *  Insere as Joins quando necessï¿½rio
 		 * @param array $arCols Array de colunas
 		 * @param string $query Querie a ser alterada
 		 * @param array $tableName Nome da tabela a receber os joins
@@ -128,7 +179,7 @@
 						$sqlQuery = substr_replace($sqlQuery,$strQueryReplace,$pos,strlen($strQuerySearch));
 					}
 					
-					//Adiciona o Join da tabela se ainda não tem
+					//Adiciona o Join da tabela se ainda nï¿½o tem
 					if(strpos($sqlQuery,' JOIN `'.$tableCheck.'`') == null){
 						
 						$joinSQL = ' JOIN `'.$tableCheck.'` ON `'.$tableName.'`.`'.$coluna.'` = `'.$tableCheck.'`.`id`';
@@ -151,7 +202,7 @@
 		/**
 		 * [STATIC] Adiciona os dados da subtabela
 		 * @param string $subtable Nome da subtabela
-		 * @param array $arQuery Array com resultados da última querie
+		 * @param array $arQuery Array com resultados da ï¿½ltima querie
 		 * @return array Retorna o arry da querie com os resultados da subtabela
 		 */		
 		private function SubTableAdd($subtable, $arQuery){
@@ -272,7 +323,7 @@
 				if (strlen($this->tableName)>0){
 					
 					//SETA os arrays
-					//Filtros básicos
+					//Filtros bï¿½sicos
 					$arWhereBasics = array();
 					if(strlen($this->whereBasicsCol)>0 && strlen($this->whereBasicsVal)>0){
 						$arWhereBasicsCol = explode(',',$this->whereBasicsCol);

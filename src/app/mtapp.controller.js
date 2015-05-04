@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('mtApp.Controllers',[])
 	   .controller("ctrlMainMenu", function ($scope, $http, getKey)
 {
@@ -103,12 +104,16 @@ angular.module('mtApp.Controllers',[])
 		}
 	});
 })
+	   .controller("ctrlRegistrar", function ($scope, $http)
+{
+	$scope.showModal = 'show';
+	
+})
 	   .controller("ctrlModal", function ($scope, $http, serviceData)
 {
 	$scope.showModal = 'show';
 	
 	$scope.$on('receiveValue', function(event, message) {
-		console.log('valor '+message);
         if(message = 'close'){
 			$scope.showModal = '';	
 		} else {

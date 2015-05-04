@@ -32,7 +32,11 @@ mtApp.config( function ($routeProvider) {
 			title: 'entrar',
 			templateUrl: '../html/login.html',
 			controller: 'entrarController'
-		})		
+		})	
+		.when('/signup', {
+			title: 'registrar',
+			templateUrl: '../html/signup.html'
+		})	
 		.otherwise({
 			redirectTo: '/home'
 		});
