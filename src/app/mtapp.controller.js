@@ -11,7 +11,7 @@ angular.module('mtApp.Controllers',[])
 			
 		if ($scope.genKey.length > 0){
 	
-			$http.get('../php/list_menu.php', {
+			$http.get('../ws/list_menu.php', {
 					params: {
 						key : $scope.genKey
 					}
@@ -25,53 +25,51 @@ angular.module('mtApp.Controllers',[])
 		}
 	});	
 })
-	   .controller("mtQuestionController", function ($scope, $http, $window, getKey)
+.controller("mtQuestionController", function ($scope, $http, $window, getKey)
 {
 	getKey.getData()
 	.success(function(data){
 		$scope.genKey = data.GeneratedKey;
-			
-		if ($scope.genKey.length > 0){
-			
-			$scope.viewerror = false;
-			$scope.SendQuestion = function() {
-			
-				var parameters = $.param({'key': $scope.genKey,'formQuestion': $scope.formQuestion});
-				$http({
-					url: '../ws/send_question.php',
-					method: 'POST',
-					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-					data: parameters
-				})
-				.success(function(data) {
-					if (data.message != '')
-					{
-						$scope.viewerror = true;
-						$scope.errorMessage = data.message;
-						
-						if(data.id != undefined && data.id > 0){
-							$scope.alertClass = 'alert-success';
-							console.log($scope.alertClass);
-						} else {
-							$scope.alertClass='alert-danger';
-						}
-							
-					}
-					
-				}).error(function(data, status) { 
-					$scope.errorMessage = status;
-					console.log(data.error);
-					$scope.viewerror = true;
-				});
-			}
-		}
+
+            if ($scope.genKey.length > 0) {
+
+                $scope.viewerror = false;
+                $scope.SendQuestion = function () {
+
+                    var parameters = $.param({'key': $scope.genKey, 'formQuestion': $scope.formQuestion});
+                    $http({
+                        url: '../ws/send_question.php',
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        data: parameters
+                    })
+                        .success(function (data) {
+                            if (data.message != '') {
+                                $scope.viewerror = true;
+                                $scope.errorMessage = data.message;
+
+                                if (data.id != undefined && data.id > 0) {
+                                    $scope.alertClass = 'alert-success';
+                                    console.log($scope.alertClass);
+                                } else {
+                                    $scope.alertClass = 'alert-danger';
+                                }
+
+                            }
+                        })
+                        .error(function (data, status) {
+                            $scope.errorMessage = status;
+                            console.log(data.error);
+                            $scope.viewerror = true;
+                        });
+                }
+            }
 	});
 })
-	   .controller("mtHomeCtrl", function ($scope, $http, getKey, serviceData)
+.controller("mtHomeCtrl", function ($scope, $http, getKey, serviceData)
 {
 	$scope.genKey = '';	
 
-	
 	getKey.getData()
 	.success(function(data){
 		$scope.genKey = data.GeneratedKey;
@@ -80,12 +78,13 @@ angular.module('mtApp.Controllers',[])
 		$scope.panelClass={
 			0: "panel-danger",
 			1: "panel-success"
-		}
+		};
+
 		if ($scope.genKey.length > 0){
 
 			serviceData.sendValue('show');
 				
-			$http.get('../php/list_	question.php', {
+			$http.get('../ws/list_question.php', {
 					params: {
 						key : $scope.genKey
 					}
@@ -105,18 +104,21 @@ angular.module('mtApp.Controllers',[])
 		}
 	});
 })
-	   .controller("ctrlRegistrar", function ($scope)
+.controller("ctrlRegistrar", function ($scope)
 {
 	$scope.showModal = 'show';
 	
 })
-	   .controller("ctrlModal", function ($scope)
+.controller("ctrlModal", function ($scope)
 {
 	$scope.showModal = 'show';
 	
 	$scope.$on('receiveValue', function(event, message) {
 
-        if(message = 'close'){
+        var msgSent = null;
+        msgSent == message;
+
+        if(msgSent == 'close'){
 			$scope.showModal = '';	
 		} else {
 			$scope.showModal = 'show';

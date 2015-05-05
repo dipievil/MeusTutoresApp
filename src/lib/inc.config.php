@@ -28,7 +28,7 @@
 			$this -> profile_points_teacher = 10; //Pode responder
 			$this -> profile_points_supervisor = 30; //Pode
 			$this -> profile_points_manager = 60;
-			$this -> profile_points_master = 100
+			$this -> profile_points_master = 100;
 			
 			//Chave de encriptação
 			$date = getdate();
@@ -36,3 +36,4 @@
 			$this -> transactionKey=hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);
 		}
 	}
+?>
