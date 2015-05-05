@@ -3,8 +3,11 @@ body{
 	margin-bottom: 60px;
 }
 p{
-	margin: 0px !important; 
+	margin: 0 !important;
 }
 .clicable{
 	cursor:pointer;
+}
+.view{
+	display:block;
 }
