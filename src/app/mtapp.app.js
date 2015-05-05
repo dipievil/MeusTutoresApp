@@ -15,23 +15,19 @@ mtApp.config( function ($routeProvider) {
 		})
 		.when('/resposta', {
 			title: 'answer',
-			templateUrl: '../html/answer.html',
-			controller: 'mtQuestionController'
+			templateUrl: '../html/answer.html'
 		})
 		.when('/perfil', {
 			title: 'perfil',
-			templateUrl: '../html/perfil.html',
-			controller: 'mtQuestionController'
+			templateUrl: '../html/perfil.html'
 		})
 		.when('/sair', {
 			title: 'sair',
-			templateUrl: '../html/sair.html',
-			controller: 'sairController'
+			templateUrl: '../html/sair.html'
 		})
 		.when('/login', {
 			title: 'entrar',
-			templateUrl: '../html/login.html',
-			controller: 'entrarController'
+			templateUrl: '../html/login.html'
 		})	
 		.when('/signup', {
 			title: 'registrar',
@@ -46,9 +42,9 @@ angular.module('mtApp')
 	.factory('getKey', function($http) {
     return {
         getData: function(data) {
-			var key='';
+
 			return $http({
-				url: '../php/key_gen.php',
+				url: '../lib/keygen.php',
 				method: "POST",
 				headers: {'Content-Type': 'application/json'}
 			    }).success(function (data) {

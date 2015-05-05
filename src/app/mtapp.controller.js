@@ -16,10 +16,10 @@ angular.module('mtApp.Controllers',[])
 						key : $scope.genKey
 					}
 				 })
-				 .success(function (data, status, headers, config) {
+				 .success(function (data) {
 					$scope.menuModel = data;
 				 })
-				 .error(function (data, status, headers, config) {
+				 .error(function (data, status) {
 					console.log("Falha ao realizar a consulta # :" + status);
 				 });
 		}
@@ -38,12 +38,12 @@ angular.module('mtApp.Controllers',[])
 			
 				var parameters = $.param({'key': $scope.genKey,'formQuestion': $scope.formQuestion});
 				$http({
-					url: '../php/send_question.php',
+					url: '../ws/send_question.php',
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					data: parameters
 				})
-				.success(function(data, status, headers, config) {
+				.success(function(data) {
 					if (data.message != '')
 					{
 						$scope.viewerror = true;
@@ -82,6 +82,7 @@ angular.module('mtApp.Controllers',[])
 			1: "panel-success"
 		}
 		if ($scope.genKey.length > 0){
+
 			serviceData.sendValue('show');
 				
 			$http.get('../php/list_	question.php', {
@@ -104,22 +105,22 @@ angular.module('mtApp.Controllers',[])
 		}
 	});
 })
-	   .controller("ctrlRegistrar", function ($scope, $http)
+	   .controller("ctrlRegistrar", function ($scope)
 {
 	$scope.showModal = 'show';
 	
 })
-	   .controller("ctrlModal", function ($scope, $http, serviceData)
+	   .controller("ctrlModal", function ($scope)
 {
 	$scope.showModal = 'show';
 	
 	$scope.$on('receiveValue', function(event, message) {
+
         if(message = 'close'){
 			$scope.showModal = '';	
 		} else {
 			$scope.showModal = 'show';
 		}
-		
     });
 });
 
