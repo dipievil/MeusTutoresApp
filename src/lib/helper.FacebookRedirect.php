@@ -6,7 +6,7 @@
 	
 	use Facebook\FacebookRedirectLoginHelper;
 	
-	$redirectUrl = 'http://meustutoresapp.esy.es/class/class.facebook.php';
+	$redirectUrl = 'http://meustutoresapp.esy.es/php/test.php';
 	$helper = new FacebookRedirectLoginHelper($redirectUrl);
 	$loginUrl = $helper->getLoginUrl();
 	

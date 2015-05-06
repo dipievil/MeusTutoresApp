@@ -1,9 +1,20 @@
 /* global angular */
 angular.module('mtApp.Controllers',[])
-	   .controller("ctrlMainMenu", function ($scope, $http, getKey)
+	   .controller("ctrlMainMenu", function ($scope, $http, getKey, $facebook)
 {
 	$scope.menuModel = '';
 	$scope.genKey = '';
+	$scope.facebookLogin = false;
+
+	$facebook.api("/me").then(
+		function(response) {
+			console.log('está logado no face');
+            $scope.facebookLogin = true;
+		},
+		function(err) {
+			console.log('não está logado no face');
+            $scope.facebookLogin = false;
+		});
 	
 	getKey.getData()
 	.success(function(data){

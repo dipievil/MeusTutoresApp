@@ -1,141 +1,171 @@
 <?php
 
-include('../lib/inc.facebook.php');
+class AccountController {
 
-use Facebook\FacebookRequest;
-use Facebook\GraphUser;
-use Facebook\FacebookRequestException;
-use Facebook\FacebookRedirectLoginHelper;
-use Facebook\FacebookJavaScriptLoginHelper;
+    public $sessionMtId;
+    public $userMtId;
+    public $userMtName;
+    public $userFaceName;
+    public $userFaceId;
+    public $userFaceMail;
 
-class queryFacebook {
+    private $sessionId;
 
-		/**
-		 * Classe do constructor
+    /**
+     * Classe do constructor
+     */
+    public function __construct(){
+        /*
+         * mt Stuff
          */
-		public function __construct(){
+        $this->userMtMail = null;
+        $this->userMtId = null;
+        $this->userMtName = null;
 
-		}
-
-		/**
-		 * Verifica se tem um usuário logado no Facebook
-		 * @return bool True se está logado
+        /*
+         * Facebook stuff
          */
-		public function VerificarUserLogado(){
-            $session = null;
-            $logado = false;
+        $this->userFaceName = null;
+        $this->userFaceId = null;
+        $this->userFaceMail = null;
 
-            $helper = new FacebookRedirectLoginHelper('http://meustutoresapp.esy.es/lib/helper.FacebookRedirect.php');
-            try {
-                $session = $helper->getSessionFromRedirect();
-            } catch(FacebookRequestException $ex) {
-                // When Facebook returns an error
-                echo $ex;
-            } catch(\Exception $ex) {
-                // When validation fails or other local issues
-                echo $ex;
-            }
+        $this->sessionId=null;
 
-            /*
-            $facebookHelper = new FacebookJavaScriptLoginHelper();
-            try {
-                $session = $facebookHelper->getSession();
-            } catch(FacebookRequestException $ex) {
-                // When Facebook returns an error
-            } catch(\Exception $ex) {
-                // When validation fails or other local issues
-            }
-            if ($session) {
-                // Logged in
-            }
-            */
-
-
-
-            if($session) {
-                $logado = true;
-            }
-
-			return $logado;
-		}
-
-        /**
-         * @param bool|null $jsonData False para retornar em JSON
-         * @return array|string Array ou JSON com os dados do usuário
+        /*
+         *
+        $_SESSION['mtSession']['userId'];
+        $_SESSION['mtSession']['userName'];
+        $_SESSION['mtSession']['userMail'];
+        $_SESSION['mtSession']['facebookId'];
+        $_SESSION['facebook']['facebookId'];
+        $_SESSION['facebook']['userName'];
+        $_SESSION['facebook']['userMail'];
+         *
          */
-        public function BuscarDadosLogado($jsonData = false){
-            $arDadosLogado = array();
-            $session = null;
+    }
 
-            include('../lib/inc.facebook.php');
-            if($session) {
-                try {
-                    $user_profile = (new FacebookRequest(
-                        $session, 'GET', '/me'
-                    ))->execute()->getGraphObject(GraphUser::className());
-                    echo $arDadosLogado['nome'] = $user_profile->getName();
-                } catch(FacebookRequestException $e) {
-                    echo "Exception ocorreu, code: " . $e->getCode();
-                    echo " with message: " . $e->getMessage();
-                }
-            }
+    /**
+     * Salva os dados do Facebook na sessão
+     */
+    public function SetaDadosSessaoFacebook(){
 
+        $userId = $this->userFaceId;
+        $userMail = $this->userFaceMail;
+        $userName = $this->userFaceName;
 
-            if($jsonData){
-                return json_encode($arDadosLogado);
-            } else {
-                return $arDadosLogado;
-            }
+        if($userId && $userName && $userMail){
+            $_SESSION['facebook']['facebookId'] = $userId;
+            $_SESSION['facebook']['userName'] = $userName;
+            $_SESSION['facebook']['userMail'] = $userMail;
         }
+    }
 
-		/*
-		 *
-		 * 	use Facebook\GraphUser;
-	// add other classes you plan to use, e.g.:
-	 use Facebook\FacebookRequest;
-	 use Facebook\FacebookRedirectLoginHelper;
+    /**
+     * Seta os dados do MtApp na session
+     */
+    public function SetaDadosSessaoMt(){
 
-	//use Facebook\GraphUser;
-	use Facebook\FacebookRequestException;
+        $userId = $this->userMtId;
+        $userName = $this->userMtName;
+        $userMail = $this->userMail;
 
-	// use Facebook\GraphUser;
-	// use Facebook\FacebookRequestException;
+        if($userId && $userName && $userMail){
+            $_SESSION['mtSession']['userId'] = $userId;
+            $_SESSION['mtSession']['userName'] = $userName;
+            $_SESSION['mtSession']['userMail'] = $userMail;
 
-	// Add `use Facebook\FacebookRedirectLoginHelper;` to top of file
-	//$helper = new FacebookRedirectLoginHelper('your redirect URL here');
-	//$loginUrl = $helper->getLoginUrl();
-	// Use the login url on a link or button to
-	// redirect to Facebook for authentication
+        }
+    }
 
-	print_r($_SESSION);
-	//$session = new FacebookSession('access token here');
-	$helper = new FacebookRedirectLoginHelper('http://meustutoresapp.esy.es/html');
-	try {
-		echo 'oi';
-	    $session = $helper->getSessionFromRedirect();
-	} catch(FacebookRequestException $ex) {
-	    // When Facebook returns an error
-		echo $ex;
-	} catch(\Exception $ex) {
-	    // When validation fails or other local issues
-		echo $ex;
-	}
+    /**
+     *
+     * Salva nas propriedades os dados do
+     * usuário Mt
+     * @param $facebookId Id do facebook do usuário
+     * @return bool Retorna true se existe
+     */
+    public function BuscarUsuarioMt($facebookId){
 
-	if ($session) {
-	  // Logged in.
-		$request = new FacebookRequest($session, 'GET', '/me');
-		$response = $request->execute();
-		print_r($session);
-		$graphObject = $response->getGraphObject();
-	} else {
-		echo '<a href="' . $helper->getLoginUrl() . '">Login</a>';
-	}
+        $userMtExists = false;
+        $objSQL = new queryConsult();
+        $objSQL->tableName = 'user';
+        $objSQL -> wheresCol = 'facebookId';
+        $objSQL -> wheresVal = $facebookId;
+        $arUser = json_decode($objSQL->execQuery());
 
-		 *
-		 *
-		 */
-
-	}
+        if(count($arUser)) {
+            $this->userMtId = $arUser['id'];
+            $this->userMtName = $arUser['nome'];
+            $this->userMtMail = $arUser['email'];
+            $this->SetaDadosSessaoMt();
+            $userMtExists = true;
+        }
+        return $userMtExists;
+    }
 
 
-?>
+    /**
+     * TODO
+     * Verifica se tem um usuário logado no Facebook
+     * @return bool True se está logado
+     */
+    public function VerificarUserFaceLogado(){
+        $session = null;
+        $logado = false;
+
+        return $logado;
+    }
+
+    /**
+     * Seta o ID da sessao
+     * @param bool $returnKey Se sim, retorna a chava ao invés de gravar
+     * na classe
+     * @return null|string Chave da session
+     * @internal param Id $FacebookUserId do usuário do Facebook
+     */
+    private function SetSessionId($returnKey = false){
+        $passName = 'mtApp';
+        $returnHash = null;
+        $facebookUserId = $this->userFaceId;
+        $mtUserId = $this->userMtId;
+        if($facebookUserId && $mtUserId){
+            $returnHash = hash('sha512', $facebookUserId.$passName.$mtUserId);
+        }
+        if($returnKey){
+            return $returnHash;
+        } else{
+            $this->sessionId = $returnHash;
+        }
+    }
+
+    /**
+     * TODO
+     */
+    public function VerificarUserMtLogado(){
+        if($_SESSION['mtSession']['userId']){
+
+        }
+    }
+
+    /**
+     * TODO
+     * @param $FacebookID
+     */
+    public function VerificaUserFaceExiste($FacebookID){
+
+    }
+
+
+    /**
+     * TODO
+     * @param bool|null $jsonData False para retornar em JSON
+     * @return array|string Array ou JSON com os dados do usuário
+     */
+    public function BuscarDadosFace($jsonData = false){
+
+
+    }
+
+
+
+}

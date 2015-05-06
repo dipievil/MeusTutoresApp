@@ -1,9 +1,12 @@
-var mtApp = angular.module('mtApp',['ngRoute', 'mtApp.Controllers']);
+var mtApp = angular.module('mtApp',['ngRoute', 'mtApp.Controllers','ngFacebook']);
 
-//angular.module ('mtApp.Controllers', []);
-//angular.module ('mtApp.Repositories', []);
+mtApp.config( function ($routeProvider,$facebookProvider) {
 
-mtApp.config( function ($routeProvider) {
+	$facebookProvider
+            .setAppId('1416196658700730')
+            .setPermissions("email,public_profile")
+            .setVersion("v2.2");
+
 	$routeProvider.
 		when('/home', {
 			title: 'home',
@@ -28,38 +31,34 @@ mtApp.config( function ($routeProvider) {
 		.when('/login', {
 			title: 'entrar',
 			templateUrl: '../html/login.html'
-		})	
+		})
 		.when('/signup', {
 			title: 'registrar',
 			templateUrl: '../html/signup.html'
-		})	
+		})
 		.otherwise({
 			redirectTo: '/home'
 		});
 });
 
-angular.module('mtApp')
-	.factory('getKey', function($http) {
-    return {
-        getData: function(data) {
+mtApp.run(
+	function( $rootScope ) {
+		// Load the facebook SDK asynchronously
+		(function(){
+			// If we've already installed the SDK, we're done
+			if (document.getElementById('facebook-jssdk')) {return;}
 
-			return $http({
-				url: '../lib/keygen.php',
-				method: "POST",
-				headers: {'Content-Type': 'application/json'}
-			    }).success(function (data) {
-					return data;
-				})
-				.error(function (data, status, headers, config) {
-					console.log('Erro : ' + status + ' ' + headers);
-				});
-        }
-    }
-})
-	.factory('serviceData', function($rootScope) {
-    return {
-        sendValue: function(msg) {
-            $rootScope.$broadcast('receiveValue', msg); 
-        }
-    };
-});
+			// Get the first script element, which we'll use to find the parent node
+			var firstScriptElement = document.getElementsByTagName('script')[0];
+
+			// Create a new script element and set its id
+			var facebookJS = document.createElement('script');
+			facebookJS.id = 'facebook-jssdk';
+
+			// Set the new script's source to the source of the Facebook JS SDK
+			facebookJS.src = '//connect.facebook.net/pt_BR/all.js';
+
+			// Insert the Facebook JS SDK into the DOM
+			firstScriptElement.parentNode.insertBefore(facebookJS, firstScriptElement);
+		}());
+	});

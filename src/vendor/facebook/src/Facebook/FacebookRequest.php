@@ -357,6 +357,15 @@ class FacebookRequest
     $context = stream_context_create($options);
     $result = file_get_contents($url, false, $context);
 
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    $data = curl_exec($curl);
+    curl_close($curl);
+
+
     if ($result === false || empty($http_response_header)) {
       throw new FacebookSDKException('STREAM_GOT_NOTHING', 52);
     }
