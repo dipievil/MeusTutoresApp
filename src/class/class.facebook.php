@@ -45,7 +45,7 @@ class AccountController {
     }
 
     /**
-     * Salva os dados do Facebook na sessão
+     * Salva os dados do Facebook na sessï¿½o
      */
     public function SetaDadosSessaoFacebook(){
 
@@ -80,18 +80,20 @@ class AccountController {
     /**
      *
      * Salva nas propriedades os dados do
-     * usuário Mt
-     * @param $facebookId Id do facebook do usuário
+     * usuï¿½rio Mt
+     * @param $facebookId Id do facebook do usuï¿½rio
      * @return bool Retorna true se existe
      */
     public function BuscarUsuarioMt($facebookId){
 
         $userMtExists = false;
-        $objSQL = new queryConsult();
-        $objSQL->tableName = 'user';
-        $objSQL -> wheresCol = 'facebookId';
-        $objSQL -> wheresVal = $facebookId;
-        $arUser = json_decode($objSQL->execQuery());
+        $ambienteUrl = null;
+
+        $objConfig = new appConfig();
+
+        $ambienteUrl = $objConfig->isWebProduction() ? $objConfig->production_path : $objConfig->development_path;
+
+        $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?facebookId='.$facebookId);
 
         if(count($arUser)) {
             $this->userMtId = $arUser['id'];
@@ -106,8 +108,8 @@ class AccountController {
 
     /**
      * TODO
-     * Verifica se tem um usuário logado no Facebook
-     * @return bool True se está logado
+     * Verifica se tem um usuï¿½rio logado no Facebook
+     * @return bool True se estï¿½ logado
      */
     public function VerificarUserFaceLogado(){
         $session = null;
@@ -118,10 +120,10 @@ class AccountController {
 
     /**
      * Seta o ID da sessao
-     * @param bool $returnKey Se sim, retorna a chava ao invés de gravar
+     * @param bool $returnKey Se sim, retorna a chava ao invï¿½s de gravar
      * na classe
      * @return null|string Chave da session
-     * @internal param Id $FacebookUserId do usuário do Facebook
+     * @internal param Id $FacebookUserId do usuï¿½rio do Facebook
      */
     private function SetSessionId($returnKey = false){
         $passName = 'mtApp';
@@ -159,7 +161,7 @@ class AccountController {
     /**
      * TODO
      * @param bool|null $jsonData False para retornar em JSON
-     * @return array|string Array ou JSON com os dados do usuário
+     * @return array|string Array ou JSON com os dados do usuï¿½rio
      */
     public function BuscarDadosFace($jsonData = false){
 
