@@ -8,8 +8,10 @@ class AccountController {
     public $userFaceName;
     public $userFaceId;
     public $userFaceMail;
+    public $userMtType;
 
     private $sessionId;
+    private $mtSessionKey;
 
     /**
      * Classe do constructor
@@ -21,6 +23,7 @@ class AccountController {
         $this->userMtMail = null;
         $this->userMtId = null;
         $this->userMtName = null;
+        $this->userMtType = null;
 
         /*
          * Facebook stuff
@@ -29,19 +32,54 @@ class AccountController {
         $this->userFaceId = null;
         $this->userFaceMail = null;
 
-        $this->sessionId=null;
+        //Id dessa sessao
+        $this->sessionId = null;
+        $this->mtSessionKey = 'mtApp';
 
-        /*
-         *
-        $_SESSION['mtSession']['userId'];
-        $_SESSION['mtSession']['userName'];
-        $_SESSION['mtSession']['userMail'];
-        $_SESSION['mtSession']['facebookId'];
-        $_SESSION['facebook']['facebookId'];
-        $_SESSION['facebook']['userName'];
-        $_SESSION['facebook']['userMail'];
-         *
-         */
+        //Segurança
+        $this->GetSessionData();
+
+        if($this->CheckSessionKey() == false){
+            $this->destroySession(true);
+        }
+    }
+
+    /**
+     * Verifica se a chave de segurança está ok
+     * @param null $jsonFormat
+     * @return bool|null|string
+     */
+    private function CheckSessionKey($jsonFormat=null){
+        $jsonReturnCheck = null;
+        $mtUserId = $this->userMtId;
+        $keyPass = $this->mtSessionKey;
+        $strHashInterno = hash('sha512', $keyPass.$mtUserId);
+
+        //verifica na classe
+        if($strHashInterno == $this->mtSessionKey){
+            if($strHashInterno == $_SESSION['sessionMtId']){
+                $jsonReturnCheck = $jsonFormat ? "[{'error':'ok'}]" : true;
+            } else {
+                $jsonReturnCheck = $jsonFormat ?"[{'error':'Chave da sessão não confere'}]" : false;
+            }
+        } else {
+            $jsonReturnCheck = $jsonFormat ? "[{'error':'Erro interno de verificação das chaves'}]" : false;
+        }
+        return $jsonReturnCheck;
+    }
+
+    /**
+     *Pega os dados da sessão e preenche a classe
+     */
+    private function GetSessionData()
+    {
+        if($_SESSION['sessionMtId']){
+            $this->sessionId = $_SESSION['sessionMtId'];
+            if($_SESSION['facebook']['facebookId'])
+                $this->PegaDadosSessaoFacebook();
+            if($_SESSION['mtSession']['userId'])
+                $this->PegaDadosSessaoMt();
+        }
     }
 
     /**
@@ -61,9 +99,26 @@ class AccountController {
     }
 
     /**
+     * Pega os dados de sessão do Facebook e
+     * grava na classe
+     */
+    private function PegaDadosSessaoFacebook(){
+        $userId = $_SESSION['facebook']['facebookId'];
+        $userName = $_SESSION['facebook']['userName'];
+        $userMail = $_SESSION['facebook']['userMail'];
+
+        if($userId && $userName && $userMail){
+            $this->userFaceId = $userId;
+            $this->userFaceMail =  $userMail;
+            $this->userFaceName = $userName;
+        }
+    }
+
+    /**
+
      * Seta os dados do MtApp na session
      */
-    public function SetaDadosSessaoMt(){
+    private function SetaDadosSessaoMt(){
 
         $userId = $this->userMtId;
         $userName = $this->userMtName;
@@ -78,85 +133,105 @@ class AccountController {
     }
 
     /**
+     * Seta os dados da sessao MtApp na classe
+     */
+    private function PegaDadosSessaoMt(){
+
+        $userId = $_SESSION['mtSession']['userId'];
+        $userName = $_SESSION['mtSession']['userName'];
+        $userMail = $_SESSION['mtSession']['userMail'];
+
+        $this->userMtId = $userId;
+        $this->userMtName = $userName;
+        $this->userMail = $userMail;
+    }
+
+    /**
      *
-     * Salva nas propriedades os dados do
-     * usu�rio Mt
+     * Busca usuário logado no face no mt. Cria
+     * session caso ainda não exista
      * @param $facebookId Id do facebook do usu�rio
      * @return bool Retorna true se existe
      */
-    public function BuscarUsuarioMt($facebookId){
+    public function BuscarUsuarioFaceNoMt($facebookId){
 
         $userMtExists = false;
         $ambienteUrl = null;
-
         $objConfig = new appConfig();
+        $appKey = $objConfig->transactionKey;
 
         $ambienteUrl = $objConfig->isWebProduction() ? $objConfig->production_path : $objConfig->development_path;
+        $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?facebookId='.$facebookId.'&key='.$appKey);
+        $arUser = json_encode($jsonUserData);
 
-        $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?facebookId='.$facebookId);
-
+        //Cria a session com os dados do usuário
         if(count($arUser)) {
             $this->userMtId = $arUser['id'];
             $this->userMtName = $arUser['nome'];
             $this->userMtMail = $arUser['email'];
+            $this->userMtType = $arUser['tipo'];
             $this->SetaDadosSessaoMt();
+            $this->CreateSessionId();
             $userMtExists = true;
         }
         return $userMtExists;
     }
 
-
     /**
-     * TODO
-     * Verifica se tem um usu�rio logado no Facebook
-     * @return bool True se est� logado
+     * Retorna a chave da sessao
+     * @return null|string
      */
-    public function VerificarUserFaceLogado(){
-        $session = null;
-        $logado = false;
-
-        return $logado;
-    }
-
-    /**
-     * Seta o ID da sessao
-     * @param bool $returnKey Se sim, retorna a chava ao inv�s de gravar
-     * na classe
-     * @return null|string Chave da session
-     * @internal param Id $FacebookUserId do usu�rio do Facebook
-     */
-    private function SetSessionId($returnKey = false){
-        $passName = 'mtApp';
+    private function CreateSessionId(){
         $returnHash = null;
-        $facebookUserId = $this->userFaceId;
+
         $mtUserId = $this->userMtId;
-        if($facebookUserId && $mtUserId){
-            $returnHash = hash('sha512', $facebookUserId.$passName.$mtUserId);
-        }
-        if($returnKey){
-            return $returnHash;
-        } else{
+        $keyPass = $this->mtSessionKey;
+
+        if($mtUserId && $keyPass){
+            $returnHash = hash('sha512', $keyPass.$mtUserId);
             $this->sessionId = $returnHash;
+            $_SESSION['sessionMtId'] = $returnHash;
+        }
+
+        return $returnHash;
+    }
+
+    public function SetSessionKey(){
+        if($_SESSION['sessionMtId']){
+            $this->sessionId = $_SESSION['sessionMtId'];
+        }
+    }
+
+
+
+
+    /**
+     * @param null $clearClass
+     */
+    private function destroySession($clearClass=null)
+    {
+        unset($_SESSION);
+        if($clearClass){
+            $this->ClearClass();
         }
     }
 
     /**
-     * TODO
+     * Limpa os dados de user da classe
      */
-    public function VerificarUserMtLogado(){
-        if($_SESSION['mtSession']['userId']){
+    private function ClearClass()
+    {
+        $this->userFaceId = null;
+        $this->userFaceName = null;
+        $this->userFaceMail = null;
 
-        }
+        $this->userMtId = null;
+        $this->userMtName = null;
+        $this->userMtMail = null;
+        $this->userMtType = null;
+
+        $this->sessionId = null;
     }
-
-    /**
-     * TODO
-     * @param $FacebookID
-     */
-    public function VerificaUserFaceExiste($FacebookID){
-
-    }
-
 
     /**
      * TODO
@@ -165,9 +240,5 @@ class AccountController {
      */
     public function BuscarDadosFace($jsonData = false){
 
-
     }
-
-
-
 }

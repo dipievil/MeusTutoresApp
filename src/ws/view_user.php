@@ -9,6 +9,15 @@ $objSQL->whereBasicsCol = 'ativo';
 $objSQL->whereBasicsVal = '1';
 $objSQL -> accessKey = $_REQUEST['key'];
 
+if($_REQUEST['facebookId']){
+    $objSQL->wheresCol = 'facebookid';
+    $objSQL->wheresVal = $_REQUEST['facebookId'];
+}
+
+if($_REQUEST['user_id']){
+    $objSQL->wheresCol = 'id';
+    $objSQL->wheresVal = $_REQUEST['id'];
+}
 
 $strQuery = $objSQL->execQuery();
 

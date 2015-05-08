@@ -1,0 +1,29 @@
+<form class="form-horizontal" method="POST">
+    <fieldset>
+
+        <legend>Registre-se</legend>
+
+        <div class="alert"
+             ng-class="alertClass"
+             ng-show="viewerror"
+             role="alert">
+            {{errorMessage}}
+        </div>
+
+        <div ng-hide="viewerror">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="text-center">
+                        <div id="fb-root" style="float:left; width:1px;"></div>
+                        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                        </fb:login-button>
+
+                        <div id="status">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+</form>

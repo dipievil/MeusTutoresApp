@@ -6,26 +6,43 @@
 	<form class="form-horizontal" method="POST">
 		<fieldset>
 
-		<legend>Registre-se</legend>
-		
-		<div class="alert"
-			ng-class="alertClass"
-			ng-show="viewerror" 
-			role="alert">
-			{{errorMessage}}
-		</div>		
+			<legend>Cadastre-se</legend>
 
-		<div ng-hide="viewerror">
 			<div class="form-group">
-				<div class="col-md-12">
-					<div class="text-center">
+				<label class="col-md-4 control-label" for="formNome">Nome</label>
+				<div class="col-md-6">
+					<input id="formNome" name="formNome" type="text" placeholder="Digite seu nome" class="form-control input-md" required="">
 
-					</div>
 				</div>
 			</div>
-		</div>
+
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="formEmail">E-mail</label>
+				<div class="col-md-6">
+					<input id="formEmail" name="formEmail" type="text" placeholder="Digite seu e-mail" class="form-control input-md">
+
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="formTipo">Tipo de conta</label>
+				<div class="col-md-6">
+					<select id="formTipo" name="formTipo" class="form-control">
+						<option value="1">Professor</option>
+						<option value="2">Usuário</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="btnSave"></label>
+				<div class="col-md-4">
+					<button id="btnSave" name="btnSave" class="btn btn-success">Cadastrar</button>
+				</div>
+			</div>
 
 		</fieldset>
 	</form>
+
 
 </div>
