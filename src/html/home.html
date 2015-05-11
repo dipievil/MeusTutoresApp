@@ -12,48 +12,41 @@
 										 data-toggle="collapse" 
 										 data-target="{{'#collapse' + $index}}" >
 										 <div ng-class="wellclass">
-											<p><b>{{question.question}}</b> <small>(por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em {{answer.data}})</small></p>
+											<p><b>{{question.question}}</b> <small>(por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em )</small></p>
 										 </div>
-										 
-										<div class="col-md-4 text-right">
-											<div class="btn-group btn-group-xs" role="group" aria-label="..." >
-												<button type="button" class="btn btn-primary btn-lg" ng-view="btnResponder">
-												  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Responder
-												</button>	
-											</div>	
-										</div>
-									</div>
+
+                                    </div>
 								</div>
 							</div>
-							<div id="{{'collapse' + $index}}" 
-								 class="panel-collapse collapse" 
-								 role ="tabpanel" 
-								 aria-labelledby="headquestion">
-								 <div ng-repeat="answer in question.tblanswer">
-									 <div class="panel-body">
-										<div class="row">
-											<div class="col-md-8">
-												{{answer.answer}} <small>(por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})</small>
-											</div>
-											<div class="col-md-4 text-right">
-												<div class="btn-group btn-group-xs" role="group" aria-label="...">
-													<button type="button" class="btn btn-primary btn-lg" ng-view="btnCorreto">
-													  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Correto
-													</button>		
+                            <div id="{{'collapse' + $index}}"
+                                 class="panel-collapse collapse"
+                                 role ="tabpanel"
+                                 aria-labelledby="headquestion">
+                                <div ng-repeat="answer in question.tblanswer">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                {{answer.answer}} <small>(por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})</small>
+                                            </div>
+                                            <div class="col-md-4 text-right">
+                                                <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                                                    <button type="button" class="btn btn-primary btn-lg" title="Afirmar que está ok" >
+                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                                    </button>
 
-													<button type="button" class="btn btn-danger btn-lg" ng-view="btnErrado">
-													  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Errado
-													</button>								
+                                                    <button type="button" class="btn btn-danger btn-lg" title="Avisar erro">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                    </button>
 
-													<button type="button" class="btn btn-warning btn-lg" ng-view="btnDenunciar">
-													  <span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Denunciar
-													</button>
-												</div>	
-											</div>
-										</div>
-									 </div>
-								 </div>
-							</div>
+                                                    <button type="button" class="btn btn-warning btn-lg" title="Denunciar" >
+                                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 					</div>
 				</div>

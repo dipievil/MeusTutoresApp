@@ -1,27 +1,29 @@
-<?
+<?php
+/**
+ * Busca dados do usuário
+ * User: dipi
+ * Date: 07/05/2015
+ * Time: 20:14
+ */
 
-include("../lib/inc.wsconfig.php");
+include_once("../lib/inc.wsconfig.php");
+
+if (!empty($_POST["facebookId"])) {
+    $facebookId = $_POST["facebookId"];
+} else if(!empty($_GET["facebookId"])){
+    $facebookId = $_GET["facebookId"];
+    $jsonFormat = false;
+    if($jsonFormat=='true')
+        $jsonFormat = true;
+}
 
 $objSQL = new queryConsult();
-
 $objSQL->tableName = 'user';
-$objSQL->whereBasicsCol = 'ativo';
-$objSQL->whereBasicsVal = '1';
-$objSQL -> accessKey = $_REQUEST['key'];
-
-if($_REQUEST['facebookId']){
-    $objSQL->wheresCol = 'facebookid';
-    $objSQL->wheresVal = $_REQUEST['facebookId'];
-}
-
-if($_REQUEST['user_id']){
-    $objSQL->wheresCol = 'id';
-    $objSQL->wheresVal = $_REQUEST['id'];
-}
-
+$objSQL -> wheresCol = 'facebookId';
+$objSQL -> wheresVal = $facebookId;
 $strQuery = $objSQL->execQuery();
 
 header('Content-Type: application/json; charset=utf-8');
 echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
 
-?>
+
