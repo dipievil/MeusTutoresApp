@@ -1,7 +1,57 @@
+<script>
+    function statusChangeCallback(response) {
+
+        if (response.status === 'connected') {
+            //Seta os dados do Facebook na session
+            FB.api('/me', function (response){
+                console.log(response.id);
+                var url = '../php/helper.facebook.php?facebookId='+response.id+'&faceName='+encodeURIComponent(response.name)+'&faceEmail='+response.email;
+
+                window.location.href = url;
+            });
+
+        } else if (response.status === 'not_authorized') {
+            console.log('Not authorized');
+        } else {
+            console.log('Not logged');
+        }
+    }
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '1416196658700730',
+            cookie     : true,  // enable cookies to allow the server to access
+                                // the session
+            xfbml      : true,  // parse social plugins on this page
+            version    : 'v2.2' // use version 2.2
+        });
+
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
 <form class="form-horizontal" method="POST">
     <fieldset>
 
-        <legend>Registre-se</legend>
+
 
         <div class="alert"
              ng-class="alertClass"
@@ -14,10 +64,9 @@
             <div class="form-group">
                 <div class="col-md-12">
                     <div class="text-center">
-                        <div id="fb-root" style="float:left; width:1px;"></div>
+                        <p>Entre com sua conta do facebook:<br/></p>
                         <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
                         </fb:login-button>
-
                         <div id="status">
                         </div>
                     </div>

@@ -24,7 +24,7 @@ class appConfig {
      * Construtor da Classe
      */
     function appConfig () {
-        //perguntas por p�gina
+        //perguntas por pagina
         $this -> sql_list_size = 5;
 
         //ordena��o dos resultados

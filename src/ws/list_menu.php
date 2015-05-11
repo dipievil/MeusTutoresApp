@@ -12,9 +12,7 @@
 	$objSQL->sqlSortColumns = 'order';
 	$objSQL->sqlSortAscending = 'ASC';
 	$objSQL->sqlOperator = 'OR';
-	
-	$arWheresCol[] = 'type';
-	$arWheresVal[] = '1';
+
 	if($_SESSION["userid"]){
 		$arWheresCol[] = 'type';
 		$arWheresVal[] = '2';		

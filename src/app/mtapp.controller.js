@@ -4,35 +4,40 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 {
 	$scope.menuModel = '';
 	$scope.genKey = '';
-	$scope.facebookLogin = false;
-    $scope.facebookID = '';
-
-	$facebook.api("/me").then(
-		function(response) {
-			console.log('está logado no face');
-            $scope.facebookLogin = true;
-		},
-		function(err) {
-			console.log('não está logado no face');
-            $scope.facebookLogin = false;
-		});
+	$scope.mtLogin = false;
+    $scope.sessionMtId = '';
 	
 	getKey.getData()
 	.success(function(data){
 		$scope.genKey = data.GeneratedKey;
-			
+
+        $http.get('../php/helper.facebook.php', {
+            params: {
+                getSessionData : true
+            }
+        })
+        .success(function (data) {
+            $scope.mtLogin = true;
+            $scope.sessionMtId = data.sessionMtId;
+        })
+        .error(function (data, status) {
+            console.log("Falha ao realizar a consulta FacebookHelper # :" + status);
+        });
+
+
 		if ($scope.genKey.length > 0){
-	
+
 			$http.get('../ws/list_menu.php', {
 					params: {
-						key : $scope.genKey
+						key : $scope.genKey,
+                        userid : $scope.sessionMtId
 					}
 				 })
 				 .success(function (data) {
 					$scope.menuModel = data;
 				 })
 				 .error(function (data, status) {
-					console.log("Falha ao realizar a consulta # :" + status);
+					console.log("Falha ao realizar a consulta list_menu :" + status);
 				 });
 		}
 	});	

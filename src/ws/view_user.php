@@ -19,6 +19,7 @@ if (!empty($_POST["facebookId"])) {
 
 $objSQL = new queryConsult();
 $objSQL->tableName = 'user';
+$objSQL -> accessKey = $_REQUEST['key'];
 $objSQL -> wheresCol = 'facebookId';
 $objSQL -> wheresVal = $facebookId;
 $strQuery = $objSQL->execQuery();

@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 class AccountController {
 
     public $sessionMtId;
@@ -38,10 +40,6 @@ class AccountController {
 
         //Segurança
         $this->GetSessionData();
-
-        if($this->CheckSessionKey() == false){
-            $this->destroySession(true);
-        }
     }
 
     /**
@@ -155,17 +153,18 @@ class AccountController {
      */
     public function BuscarUsuarioFaceNoMt($facebookId){
 
+        include ('../lib/inc.config.php');
         $userMtExists = false;
         $ambienteUrl = null;
         $objConfig = new appConfig();
         $appKey = $objConfig->transactionKey;
 
         $ambienteUrl = $objConfig->isWebProduction() ? $objConfig->production_path : $objConfig->development_path;
-        $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?facebookId='.$facebookId.'&key='.$appKey);
-        $arUser = json_encode($jsonUserData);
+        $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?redirect=true&facebookId='.$facebookId.'&key='.$appKey);
+        $arUser = json_decode($jsonUserData);
 
         //Cria a session com os dados do usuário
-        if(count($arUser)) {
+        if($arUser['id']) {
             $this->userMtId = $arUser['id'];
             $this->userMtName = $arUser['nome'];
             $this->userMtMail = $arUser['email'];
@@ -203,10 +202,9 @@ class AccountController {
     }
 
 
-
-
     /**
-     * @param null $clearClass
+     * Destroi a sessão
+     * @param null $clearClass Limpa os dados da classe
      */
     private function destroySession($clearClass=null)
     {
@@ -240,5 +238,37 @@ class AccountController {
      */
     public function BuscarDadosFace($jsonData = false){
 
+    }
+
+    /**
+     * Retorna a sessão atual do sistema
+     * @param bool $retornaJson Retorna em formato json
+     * @return null|string Dados da session atual
+     */
+    public function RetornaSessionData($retornaJson = false)
+    {
+        $arReturnData = null;
+
+
+        $arReturnData['sessionMtId'] = $_SESSION['sessionMtId'];
+
+        $arReturnData['mtSessionUserId'] = $_SESSION['mtSession']['userId'];
+        $arReturnData['mtSessionUserName'] = $_SESSION['mtSession']['userName'];
+        $arReturnData['mtSessionUserMail'] = $_SESSION['mtSession']['userMail'];
+
+        $arReturnData['facebookFacebookId'] = $_SESSION['facebook']['facebookId'];
+        $arReturnData['facebookUserName'] = $_SESSION['facebook']['userName'];
+        $arReturnData['facebookUserMail'] = $_SESSION['facebook']['userMail'];
+
+
+        if(!$arReturnData['sessionMtId'])
+            $arReturnData = null;
+
+        if($retornaJson)
+            $returnData = json_encode($arReturnData);
+        else
+            $returnData = $arReturnData;
+
+        return $returnData;
     }
 }
