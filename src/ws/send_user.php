@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$objSQL->whereBasicsCol = 'nome';
 		$objSQL->whereBasicsVal = "'".$userName."'";
 
-		$strResultUser = $objSQL->execQuery(null);
+		$strResultUser = $objSQL->execSelect(null);
 
         //Verifica se o usuário já existe
         if(strpos($strResultUser,'question')>1){
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             $arResult['message'] = utf8_encode('Falha ao cadastrar o usuário.');
 
             //Insere os dados na base
-            $resultInsert = $objSQL->insertQuery();
+            $resultInsert = $objSQL->execInsert();
 
             if(is_numeric($resultInsert)){
                 if($resultInsert>0){

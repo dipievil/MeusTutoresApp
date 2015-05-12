@@ -5,7 +5,10 @@
             //Seta os dados do Facebook na session
             FB.api('/me', function (response){
                 console.log(response.id);
-                var url = '../php/helper.facebook.php?facebookId='+response.id+'&faceName='+encodeURIComponent(response.name)+'&faceEmail='+response.email;
+                var faceId = response.id;
+                var faceName = encodeURIComponent(response.name);
+                var faceMail = response.email;
+                var url = '../php/helper.facebook.php?redirect=true&facebookId='+faceId+'&faceName='+faceName+'&faceEmail='+faceMail;
 
                 window.location.href = url;
             });

@@ -12,7 +12,7 @@
 										 data-toggle="collapse" 
 										 data-target="{{'#collapse' + $index}}" >
 										 <div ng-class="wellclass">
-											<p><b>{{question.question}}</b> <small>(por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em )</small></p>
+											<p><b>{{question.question}}</b> <small>(por: <a href="../Perfil?id={{question.id_user}}">{{question.user}}</a> em {{question.date}})</small></p>
 										 </div>
 
                                     </div>
@@ -26,7 +26,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                {{answer.answer}} <small>(por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.data}})</small>
+                                                {{answer.answer}} <small>(por: <a href="../Perfil?id={{question.id_user}}">{{answer.user}}</a> em {{answer.date}})</small>
                                             </div>
                                             <div class="col-md-4 text-right">
                                                 <div class="btn-group btn-group-xs" role="group" aria-label="...">

@@ -90,9 +90,11 @@ class AccountController {
         $userName = $this->userFaceName;
 
         if($userId && $userName && $userMail){
+
             $_SESSION['facebook']['facebookId'] = $userId;
             $_SESSION['facebook']['userName'] = $userName;
             $_SESSION['facebook']['userMail'] = $userMail;
+            $this->CreateSessionId();
         }
     }
 
@@ -100,7 +102,7 @@ class AccountController {
      * Pega os dados de sessão do Facebook e
      * grava na classe
      */
-    private function PegaDadosSessaoFacebook(){
+    public function PegaDadosSessaoFacebook(){
         $userId = $_SESSION['facebook']['facebookId'];
         $userName = $_SESSION['facebook']['userName'];
         $userMail = $_SESSION['facebook']['userMail'];
@@ -116,17 +118,18 @@ class AccountController {
 
      * Seta os dados do MtApp na session
      */
-    private function SetaDadosSessaoMt(){
+    public function SetaDadosSessaoMt(){
 
         $userId = $this->userMtId;
         $userName = $this->userMtName;
-        $userMail = $this->userMail;
-
+        $userMail = $this->userMtMail;
+        $userType = $this->userMtType;
         if($userId && $userName && $userMail){
             $_SESSION['mtSession']['userId'] = $userId;
             $_SESSION['mtSession']['userName'] = $userName;
             $_SESSION['mtSession']['userMail'] = $userMail;
-
+            $_SESSION['mtSession']['userType'] = $userType;
+            $this->CreateSessionId();
         }
     }
 
@@ -136,12 +139,14 @@ class AccountController {
     private function PegaDadosSessaoMt(){
 
         $userId = $_SESSION['mtSession']['userId'];
+        $userType = $_SESSION['mtSession']['userType'];
         $userName = $_SESSION['mtSession']['userName'];
         $userMail = $_SESSION['mtSession']['userMail'];
 
         $this->userMtId = $userId;
         $this->userMtName = $userName;
-        $this->userMail = $userMail;
+        $this->userMtMail = $userMail;
+        $this->userMtType = $userType;
     }
 
     /**
@@ -153,22 +158,25 @@ class AccountController {
      */
     public function BuscarUsuarioFaceNoMt($facebookId){
 
-        include ('../lib/inc.config.php');
+        include_once ('../lib/inc.config.php');
         $userMtExists = false;
         $ambienteUrl = null;
         $objConfig = new appConfig();
         $appKey = $objConfig->transactionKey;
 
+
         $ambienteUrl = $objConfig->isWebProduction() ? $objConfig->production_path : $objConfig->development_path;
         $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?redirect=true&facebookId='.$facebookId.'&key='.$appKey);
-        $arUser = json_decode($jsonUserData);
+        $arUser = json_decode($jsonUserData,true);
+
+
 
         //Cria a session com os dados do usuário
-        if($arUser['id']) {
-            $this->userMtId = $arUser['id'];
-            $this->userMtName = $arUser['nome'];
-            $this->userMtMail = $arUser['email'];
-            $this->userMtType = $arUser['tipo'];
+        if($arUser[0]['id']) {
+            $this->userMtId = $arUser[0]['id'];
+            $this->userMtName = $arUser[0]['nome'];
+            $this->userMtMail = $arUser[0]['email'];
+            $this->userMtType = $arUser[0]['tipo'];
             $this->SetaDadosSessaoMt();
             $this->CreateSessionId();
             $userMtExists = true;
@@ -186,7 +194,7 @@ class AccountController {
         $mtUserId = $this->userMtId;
         $keyPass = $this->mtSessionKey;
 
-        if($mtUserId && $keyPass){
+        if(strlen($mtUserId)>0 && $keyPass){
             $returnHash = hash('sha512', $keyPass.$mtUserId);
             $this->sessionId = $returnHash;
             $_SESSION['sessionMtId'] = $returnHash;

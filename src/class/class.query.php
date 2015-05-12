@@ -55,6 +55,7 @@
 			$this->sqlOperator = null;
 			$config = new appConfig();
 			$this->transactionKey = $config->transactionKey;
+			unset($config);
 			
 			$this->sqlSortColumns = $sortColumns;
 			$this->sqlSortAscending = $sortAscending;
@@ -89,7 +90,7 @@
 		 *  @return boolean True se gerou com sucesso
 		 **/
 		 
-		public function  GetPremissions($key,
+		public function  GetPermissions($key,
 										$id_user = null,
 										$permiteResp = FALSE,
 										$permiteVotar = FALSE,
@@ -99,6 +100,7 @@
 			//busca configura��es
 			$config = new appConfig();
 			$transactionKey = $config->transactionKey;
+			unset($config);
 			
 			$nivelUser = 0;
 			//Array default de configuração
@@ -158,14 +160,8 @@
 					//Nome da tabela do Join
 					$tableCheck = str_replace('id_','',$coluna);
 					
-					//Altera coluna do ID pela coluna com valor
-					$keyToChange = array_search($coluna,$arCols);
-					
 					//Coluna para alterar
 					$arColChange = $db->GetColumnNames($tableCheck);
-					
-					//Adiciona a nova coluna ao array
-					//$arCols[] = $arColChange[1];
 					
 					$strQuerySearch = '`'.$tableName.'`.`'.$coluna.'`';
 					$strQueryReplace = '`'.$tableName.'`.`'.$coluna.'`,`'.$tableCheck.'`.`'.$arColChange[1].'`';
@@ -275,7 +271,7 @@
 		 * [STATIC] Roda uma query de insert
 		 * @return string Retorna o json com o resultado
 		 */			
-		public function insertQuery(){
+		public function execInsert(){
 			
 			$db = new MySQL();
 			$strInsertID=0;
@@ -286,8 +282,11 @@
 				foreach($arCols as $col){
 					$arColsR[] = $col;
 				}
-				foreach($arVals as $col){
-					$arValsR[] = $col;
+				foreach($arVals as $value){
+					if(is_numeric($value) && strlen($value)<10)
+						$arValsR[] = $value;
+					else
+						$arValsR[] = "'".$value."'";
 				}
 				
 				$arValuesToAdd = array_combine($arColsR,$arValsR);
@@ -309,7 +308,7 @@
 		 * @param bool $DEBUG True se deseja debugar
 		 * @return string Retorna o json com o resultado
 		 */			
-		function execQuery($subtable = null,$DEBUG = null){
+		function execSelect($subtable = null,$DEBUG = null){
 			
 			$db = new MySQL();
 			if($DEBUG)
@@ -425,6 +424,12 @@
 				
 			$db->Kill();
 		}
-		
+
+		public function ClearString($string) {
+			$stringToChange = strtolower(str_replace(' ', '', $string));
+			$stringToChange = preg_replace('/[^A-Za-z0-9\-]/', '', $stringToChange);
+			return $stringToChange;
+		}
+
 	}
 ?>

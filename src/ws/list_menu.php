@@ -13,12 +13,12 @@
 	$objSQL->sqlSortAscending = 'ASC';
 	$objSQL->sqlOperator = 'OR';
 
-	if($_SESSION["userid"]){
+	if($_REQUEST["userid"]>0){
 		$arWheresCol[] = 'type';
-		$arWheresVal[] = '2';		
+		$arWheresVal[] = $_SESSION['mtSession']['userType'];
 	} else {
 		$arWheresCol[] = 'type';
-		$arWheresVal[] = '3';		
+		$arWheresVal[] = '3';
 	}
 	
 	if(count($arWheresCol)>0)
@@ -26,7 +26,7 @@
 	if(count($arWheresVal)>0)
 		$objSQL -> wheresVal = implode(',',$arWheresVal);
 	
-	$strQuery = $objSQL->execQuery();
+	$strQuery = $objSQL->execSelect();
 	
 	header('Content-Type: application/json; charset=utf-8');	
 	echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));	
