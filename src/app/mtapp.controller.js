@@ -1,35 +1,37 @@
 /* global angular */
 var mtAppControllers = angular.module('mtApp.Controllers',[])
-	   .controller("ctrlMainMenu", function ($scope, $http, getKey, $facebook)
+.controller("ctrlMainMenu", function ($scope, $http, getKey, $facebook)
 {
 	$scope.menuModel = '';
 	$scope.genKey = '';
 	$scope.mtLogin = false;
-    $scope.sessionMtId = 0;
-	
-	getKey.getData()
-	.success(function(data){
-		$scope.genKey = data.GeneratedKey;
+    $scope.sessionMtId = null;
+    $scope.sessionMtUserId = '0';
 
-
-        $http.get('../php/helper.facebook.php', {
-            params: {
-                getSessionData : true
+    $http.get('../php/helper.facebook.php', {
+        params: {
+            getSessionData : true
+        }
+    })
+    .success(function (data) {
+        if(data!= null){
+            console.log(data);
+            if(data.sessionMtId != undefined && data.sessionMtId.length > 0){
+                $scope.mtLogin = true;
+                $scope.sessionMtUserId = data.mtSessionUserId;
             }
-        })
-        .success(function (data) {
-				if(data!= null){
-					if(data.sessionMtId != undefined && data.sessionMtId.length > 0){
-						$scope.mtLogin = true;
-						$scope.sessionMtId = data.sessionMtId;
-					}
-				}
+        }
+
+        getKey.getData()
+            .success(function(data) {
+                $scope.genKey = data.GeneratedKey;
                 if ($scope.genKey.length > 0){
                     console.log($scope.genKey);
+                    console.log($scope.sessionMtId);
                     $http.get('../ws/list_menu.php', {
                         params: {
                             key : $scope.genKey,
-                            userid : $scope.sessionMtId
+                            userid : $scope.sessionMtUserId
                         }
                     })
                         .success(function (data) {
@@ -39,49 +41,41 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
                             console.log("Falha ao realizar a consulta list_menu :" + status);
                         });
                 }
-
-        })
-        .error(function (data, status) {
-            console.log("Falha ao realizar a consulta FacebookHelper # :" + status);
-        });
-
-
-
-	});	
+            });
+    })
+    .error(function (data, status) {
+        console.log("Falha ao realizar a consulta FacebookHelper # :" + status);
+    });
 })
 .controller("mtQuestionController", function ($scope, $http, $window, getKey)
 {
-	getKey.getData()
-	.success(function(data){
-		$scope.genKey = data.GeneratedKey;
-        $scope.userid = 0;
-        $scope.viewerror = false;
+    $scope.userid = 0;
+    $scope.viewerror = false;
 
-        if ($scope.genKey.length > 0) {
-            $scope.SendQuestion = function () {
-            $http.get('../php/helper.facebook.php', {
-                params: {
-                    getSessionData : true
-                }
-            })
-                .success(function (data) {
-                    if(data.mtSessionUserId != undefined){
-
-                        $scope.userid = data.mtSessionUserId;
-
-
-                        var parameters = $.param(
-                            {
-                                'key': $scope.genKey,
-                                'userid': $scope.userid,
-                                'formQuestion': $scope.formQuestion});
-
-                        $http({
-                            url: '../ws/send_question.php',
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            data: parameters
-                        })
+    $scope.SendQuestion = function () {
+        $http.get('../php/helper.facebook.php', {
+            params: {
+                getSessionData : true
+            }
+        })
+        .success(function (data) {
+            if(data.mtSessionUserId != undefined){
+                $scope.userid = data.mtSessionUserId;
+                getKey.getData()
+                    .success(function(data){
+                        $scope.genKey = data.GeneratedKey;
+                        if ($scope.genKey.length > 0) {
+                            var parameters = $.param(
+                                {
+                                    'key': $scope.genKey,
+                                    'userid': $scope.userid,
+                                    'formQuestion': $scope.formQuestion});
+                            $http({
+                                url: '../ws/send_question.php',
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                data: parameters
+                            })
                             .success(function (data) {
                                 if (data.message != '') {
                                     $scope.viewerror = true;
@@ -98,12 +92,15 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
                             .error(function (data, status) {
                                 console.log('Falha ao enviar pergunta #'+status);
                             });
-                    }
-
-                });
-        }
+                        }
+                    });
             }
-	});
+
+        });
+
+    };
+
+
 })
 .controller("mtHomeCtrl", function ($scope, $http, getKey, serviceData)
 {
@@ -146,6 +143,55 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 {
 	$scope.showModal = 'show';
 	
+})
+.controller("ctrlSair", function ($scope)
+{
+    $http.get('../php/helper.facebook.php', {
+        params: {
+            logout : 'true'
+        }
+    })
+        .success( function(data){
+            $scope.errorMessage = data.message;
+        })
+        .error(function (data, status) {
+            console.log('Falha ao realizar a consulta #'+status);
+        });
+    window.location.href = url;
+})
+.controller("ctrlLogin", function ($scope, $facebook)
+{
+    $scope.showModal = 'show';
+    $scope.isLoggedIn = false;
+    console.log('go');
+
+    $scope.login = function() {
+        $facebook.login().then(function() {
+            refresh();
+        });
+    };
+
+    function refresh() {
+        $facebook.api("/me").then(
+            function(response) {
+                if (response.id != undefined) {
+                    console.log(response.id);
+                    var faceId = response.id;
+                    var faceName = encodeURIComponent(response.name);
+                    var faceMail = response.email;
+                    var url = '../php/helper.facebook.php?redirect=true&facebookId='+faceId+'&faceName='+faceName+'&faceEmail='+faceMail;
+
+                    window.location.href = url;
+                } else {
+                    console.log('Not logged');
+                }
+            },
+            function(err) {
+                console.log('Not logged');
+            });
+    };
+
+    refresh();
 })
 .controller("ctrlModal", function ($scope)
 {

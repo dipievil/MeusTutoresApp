@@ -8,22 +8,17 @@
 	$objSQL->whereBasicsVal = '1';
 	$objSQL -> accessKey = $_REQUEST['key'];
 	
-	$date = getdate();
-	$apppass = 'v5b6n7';
-	$objSQL -> accessKey = hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass);		
-	
-	
 	if($_REQUEST['answered']){
 		$arWheresCol[] = 'aswered';
 		$arWheresVal[] = '1';
 	}
 	
 	if($_REQUEST['sortcolumns'])
-		$objSQL->sqlSortColumns = $_REQUEST[$sortColumns];
+		$objSQL->sqlSortColumns = $_REQUEST['sortColumns'];
 	else
 		$objSQL->sqlSortColumns = 'date';
 	
-	$objSQL->sqlSortAscending = 'DESC';
+	$objSQL->sqlSortAscending = false;
 	
 	if($_REQUEST['id_question']){
 		$objSQL -> cols = 'question,id_user,date,answered,flag';

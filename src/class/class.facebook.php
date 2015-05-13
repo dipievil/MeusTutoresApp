@@ -39,7 +39,54 @@ class AccountController {
         $this->mtSessionKey = 'mtApp';
 
         //Segurança
-        $this->GetSessionData();
+    }
+
+    /**
+     *
+     * Inicializa a sessão do mt no sistema
+     *
+     * @param $facebookId Id do Facebook do usuário
+     * @param $faceName Nome no Facebook do usuário
+     * @param $faceEmail E-mail do usuário no Facebook
+     */
+    public function CreateMtSession($facebookId, $faceName, $faceEmail)
+    {
+        //Cria sessão dos dados do Face
+        $this->userFaceId = $facebookId;
+        $this->userFaceName = $faceName;
+        $this->userFaceMail = $faceEmail;
+        $this->SetaDadosSessaoFacebook();
+        $userExists = $this->BuscarUsuarioFaceNoMt($_REQUEST['facebookId']);
+
+        //Se usuario nao existe, cria
+        if(!$userExists){
+            $objSql = new queryConsult();
+            $objSql->tableName = 'user';
+            $objSql->whereBasicsVal =  $objSql->ClearString($_REQUEST['faceName']) . "," .
+                "1," .
+                $_REQUEST['faceName'] . "," .
+                $_REQUEST['facebookId'] . ",".
+                $_REQUEST['faceEmail'] . ",".
+                "noPass,0,0,".date('Y-m-d H:i:s').",1";
+            $objSql->whereBasicsCol = 'user,tipo,nome,facebookid,email,pass,points,flag,date,ativo';
+
+            $insertedID = $objSql->ExecInsert();
+            if($insertedID>0){
+                $this->BuscarUsuarioFaceNoMt($_REQUEST['facebookId']);
+                $this->SetaDadosSessaoMt();
+            }
+        } else{
+            $this->SetaDadosSessaoMt();
+        }
+    }
+
+
+    /**
+     * Remove a sessão do usuário
+     */
+    public function RemoveMtSession()
+    {
+        $this->DestroySession(true);
     }
 
     /**
@@ -164,12 +211,9 @@ class AccountController {
         $objConfig = new appConfig();
         $appKey = $objConfig->transactionKey;
 
-
         $ambienteUrl = $objConfig->isWebProduction() ? $objConfig->production_path : $objConfig->development_path;
         $jsonUserData = file_get_contents('http://'.$ambienteUrl.'/ws/view_user.php?redirect=true&facebookId='.$facebookId.'&key='.$appKey);
         $arUser = json_decode($jsonUserData,true);
-
-
 
         //Cria a session com os dados do usuário
         if($arUser[0]['id']) {
@@ -214,9 +258,12 @@ class AccountController {
      * Destroi a sessão
      * @param null $clearClass Limpa os dados da classe
      */
-    private function destroySession($clearClass=null)
+    private function DestroySession($clearClass=null)
     {
+        print_r($_SESSION);
+        echo 'destrooooooooooooy';
         unset($_SESSION);
+        print_r($_SESSION);
         if($clearClass){
             $this->ClearClass();
         }
@@ -257,17 +304,13 @@ class AccountController {
     {
         $arReturnData = null;
 
-
         $arReturnData['sessionMtId'] = $_SESSION['sessionMtId'];
-
         $arReturnData['mtSessionUserId'] = $_SESSION['mtSession']['userId'];
         $arReturnData['mtSessionUserName'] = $_SESSION['mtSession']['userName'];
         $arReturnData['mtSessionUserMail'] = $_SESSION['mtSession']['userMail'];
-
         $arReturnData['facebookFacebookId'] = $_SESSION['facebook']['facebookId'];
         $arReturnData['facebookUserName'] = $_SESSION['facebook']['userName'];
         $arReturnData['facebookUserMail'] = $_SESSION['facebook']['userMail'];
-
 
         if(!$arReturnData['sessionMtId'])
             $arReturnData = null;

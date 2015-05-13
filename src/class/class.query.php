@@ -55,7 +55,6 @@
 			$this->sqlOperator = null;
 			$config = new appConfig();
 			$this->transactionKey = $config->transactionKey;
-			unset($config);
 			
 			$this->sqlSortColumns = $sortColumns;
 			$this->sqlSortAscending = $sortAscending;
@@ -165,10 +164,7 @@
 					
 					$strQuerySearch = '`'.$tableName.'`.`'.$coluna.'`';
 					$strQueryReplace = '`'.$tableName.'`.`'.$coluna.'`,`'.$tableCheck.'`.`'.$arColChange[1].'`';
-					
-					if($this->DEBUGMODE)
-					echo "\n\nQuerie antes Join: ".$sqlQuery;
-					
+
 					//Altera a query
 					$pos = strpos($sqlQuery,$strQuerySearch);
 					if ($pos !== false) {
@@ -182,8 +178,6 @@
 						$sqlQuery = str_replace(' WHERE',$joinSQL.' WHERE ',$sqlQuery);
 					}
 					
-					if($this->DEBUGMODE)
-					echo "\n\nQuerie depois Join : ".$sqlQuery;
 				}
 			}
 			
@@ -240,17 +234,8 @@
 											$colOrder,
 											true,
 											null);
-											
-												
-					if($this->DEBUGMODE){
-						echo "\n\n subtabela BEFORE :\n ";
-					}
-						
-					$sqlxtQuery = $this->inserJoins($arxtColNames, $sqlxtQuery, $xtTblName);
-						
-					if($this->DEBUGMODE)
-						echo "\n subtabela AFTER: \n";	
 
+					$sqlxtQuery = $this->inserJoins($arxtColNames, $sqlxtQuery, $xtTblName);
 
 					//Adiciona subconsulta ao array final
 					if($db->Query($sqlxtQuery)){
@@ -322,7 +307,7 @@
 				if (strlen($this->tableName)>0){
 					
 					//SETA os arrays
-					//Filtros b�sicos
+					//Filtros básicos
 					$arWhereBasics = array();
 					if(strlen($this->whereBasicsCol)>0 && strlen($this->whereBasicsVal)>0){
 						$arWhereBasicsCol = explode(',',$this->whereBasicsCol);
@@ -389,8 +374,9 @@
 						
 					}
 									
+					if($this->DEBUGMODE)
+						echo $sqlQuery;
 
-													
 					$this->strQuery = $sqlQuery;													
 					
 					//Trata os JOINS

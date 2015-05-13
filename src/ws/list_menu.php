@@ -13,7 +13,8 @@
 	$objSQL->sqlSortAscending = 'ASC';
 	$objSQL->sqlOperator = 'OR';
 
-	if($_REQUEST["userid"]>0){
+
+	if($_REQUEST["userid"]>0 && $_SESSION['mtSession']['userType']){
 		$arWheresCol[] = 'type';
 		$arWheresVal[] = $_SESSION['mtSession']['userType'];
 	} else {

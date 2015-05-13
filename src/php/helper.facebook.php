@@ -12,52 +12,33 @@ session_start();
 
 $AccountController = new AccountController();
 $strQuery = "[{'data':'vazio'}]";
-$userExists = false;
 
+if($_REQUEST['logout']){
+    $AccountController->RemoveMtSession();
+    $strQuery = "[{'message':'Sessão encerrada com sucesso'}]";
+    echo 'a';print_r($_SESSION);
+    unset($_SESSION);
+    echo 'b';print_r($_SESSION);
+    header('Content-Type: application/json; charset=utf-8');
+    echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
+} else {
 //Se recebeu dados do face, seta a session
-if($_REQUEST['facebookId'] && $_REQUEST['faceName'] && $_REQUEST['faceEmail']){
-    $userExists = false;
-    //Cria sessão dos dados do Face
-    $AccountController->userFaceId = $_REQUEST['facebookId'];
-    $AccountController->userFaceName = $_REQUEST['faceName'];
-    $AccountController->userFaceMail = $_REQUEST['faceEmail'];
-    $AccountController->SetaDadosSessaoFacebook();
-    $userExists = $AccountController->BuscarUsuarioFaceNoMt($_REQUEST['facebookId']);
-
-    //Se usuario nao existe, cria
-    if(!$userExists){
-        $insertedID = 0;
-        $objSql = new queryConsult();
-        $objSql->tableName = 'user';
-        $objSql->whereBasicsVal =  $objSql->ClearString($_REQUEST['faceName']) . "," .
-            "1," .
-            $_REQUEST['faceName'] . "," .
-            $_REQUEST['facebookId'] . ",".
-            $_REQUEST['faceEmail'] . ",".
-            "noPass,0,0,".date('Y-m-d H:i:s').",1";
-        $objSql->whereBasicsCol = 'user,tipo,nome,facebookid,email,pass,points,flag,date,ativo';
-
-        $insertedID = $objSql->ExecInsert();
-        if($insertedID>0){
-            $AccountController->BuscarUsuarioFaceNoMt($_REQUEST['facebookId']);
-            $AccountController->SetaDadosSessaoMt();
-        }
-
-
-    } else{
-        $AccountController->SetaDadosSessaoMt();
-    }
-
-    $strQuery = $AccountController->RetornaSessionData();
+if($_REQUEST['facebookId'] && $_REQUEST['faceName']){
+    echo 'mahoe';
+    $AccountController->CreateMtSession($_REQUEST['facebookId'],$_REQUEST['faceName'],$_REQUEST['faceEmail']);
     $objConfig = new appConfig();
     $urlToGo = ($objConfig->isWebProduction()) ? $objConfig->production_path : $objConfig->development_path;
     header('Location: http://'.$urlToGo.'/html/index.html');
 }
 
+$strQuery =  $AccountController->RetornaSessionData(true);
+
 if($_REQUEST['getSessionData']){
-    $strQuery =  $AccountController->RetornaSessionData(true);
+    print_r($_SESSION);
     header('Content-Type: application/json; charset=utf-8');
     echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
+}
+
 }
 
 

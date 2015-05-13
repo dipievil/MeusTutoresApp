@@ -33,6 +33,9 @@ p{
 .navbar-default .navbar-nav>li>a {
     color: #fff;
 }
+.navbar-default .navbar-nav>li>a:hover {
+    color: #efefef;
+}
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover{
     background-color:#0080FF;
     color:#fff;
