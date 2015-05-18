@@ -15,7 +15,6 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
     })
     .success(function (data) {
         if(data!= null){
-            console.log(data);
             if(data.sessionMtId != undefined && data.sessionMtId.length > 0){
                 $scope.mtLogin = true;
                 $scope.sessionMtUserId = data.mtSessionUserId;
@@ -26,8 +25,6 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
             .success(function(data) {
                 $scope.genKey = data.GeneratedKey;
                 if ($scope.genKey.length > 0){
-                    console.log($scope.genKey);
-                    console.log($scope.sessionMtId);
                     $http.get('../ws/list_menu.php', {
                         params: {
                             key : $scope.genKey,
@@ -116,6 +113,11 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 			1: "panel-success"
 		};
 
+        $scope.btnResposta = {
+            0: "",
+            1: "hidden"
+        };
+
 		if ($scope.genKey.length > 0){
 
 			serviceData.sendValue('show');
@@ -163,7 +165,6 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 {
     $scope.showModal = 'show';
     $scope.isLoggedIn = false;
-    console.log('go');
 
     $scope.login = function() {
         $facebook.login().then(function() {
@@ -175,7 +176,6 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
         $facebook.api("/me").then(
             function(response) {
                 if (response.id != undefined) {
-                    console.log(response.id);
                     var faceId = response.id;
                     var faceName = encodeURIComponent(response.name);
                     var faceMail = response.email;
@@ -193,6 +193,9 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 
     refresh();
 })
+    .controller("ctrlPerfil", function($scope){
+        console.log($scope.userId);
+    })
 .controller("ctrlModal", function ($scope)
 {
 	$scope.showModal = 'show';

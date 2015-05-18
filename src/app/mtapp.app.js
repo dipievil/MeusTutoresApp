@@ -16,11 +16,11 @@ mtApp.config( function ($routeProvider,$facebookProvider) {
 			title: 'pergunta',
 			templateUrl: '../html/question.html'
 		})
-		.when('/resposta', {
+		.when('/resposta/:questionId', {
 			title: 'answer',
 			templateUrl: '../html/answer.html'
 		})
-		.when('/perfil', {
+		.when('/perfil/:userId', {
 			title: 'perfil',
 			templateUrl: '../html/perfil.html'
 		})

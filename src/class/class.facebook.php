@@ -260,10 +260,8 @@ class AccountController {
      */
     private function DestroySession($clearClass=null)
     {
-        print_r($_SESSION);
-        echo 'destrooooooooooooy';
         unset($_SESSION);
-        print_r($_SESSION);
+
         if($clearClass){
             $this->ClearClass();
         }

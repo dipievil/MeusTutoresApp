@@ -6,10 +6,15 @@
 	$objSQL->tableName = 'question';
 	$objSQL->whereBasicsCol = 'ativo';
 	$objSQL->whereBasicsVal = '1';
-	$objSQL -> accessKey = $_REQUEST['key'];
-	
+	//$objSQL -> accessKey = $_REQUEST['key'];
+
+	$date = getdate();
+	$apppass = 'v5b6n7';
+	$arKey = array("GeneratedKey"=>hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass));
+	$objSQL -> accessKey = $arKey['GeneratedKey'];
+
 	if($_REQUEST['answered']){
-		$arWheresCol[] = 'aswered';
+		$arWheresCol[] = 'answered';
 		$arWheresVal[] = '1';
 	}
 	
