@@ -9,6 +9,9 @@
 	$objSQL->whereBasicsVal = '1';
 	$objSQL -> accessKey = $_REQUEST['key'];
 
+
+
+
 	if($_REQUEST['sortcolumns'])
 		$objSQL->sqlSortColumns = $_REQUEST[$sortColumns];
 	else

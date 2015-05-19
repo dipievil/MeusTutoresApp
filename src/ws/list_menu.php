@@ -5,7 +5,13 @@
 	$objSQL = new queryConsult();
 	session_start();
 
-	$objSQL -> accessKey = $_REQUEST['key'];	
+	$objSQL -> accessKey = $_REQUEST['key'];
+
+	$date = getdate();
+	$apppass = 'v5b6n7';
+	$arKey = array("GeneratedKey"=>hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$apppass));
+	$objSQL -> accessKey = $arKey['GeneratedKey'];
+
 	$objSQL->tableName = 'menu';
 	$objSQL->whereBasicsCol = 'ativo';
 	$objSQL->whereBasicsVal = '1';

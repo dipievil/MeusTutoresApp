@@ -3,50 +3,52 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 .controller("ctrlMainMenu", function ($scope, $http, getKey, $facebook)
 {
 	$scope.menuModel = '';
-	$scope.genKey = '';
-	$scope.mtLogin = false;
-    $scope.sessionMtId = null;
-    $scope.sessionMtUserId = '0';
+	$scope.menuKey = '';
+	$scope.menuLogin = false;
+    $scope.menuMtId = null;
+    $scope.menuMtUserId = '0';
 
     $http.get('../php/helper.facebook.php', {
         params: {
             getSessionData : true
         }
     })
-    .success(function (data) {
-        if(data!= null){
-            if(data.sessionMtId != undefined && data.sessionMtId.length > 0){
-                $scope.mtLogin = true;
-                $scope.sessionMtUserId = data.mtSessionUserId;
+    .success(function (dataSession) {
+        if(dataSession!= null){
+            if(dataSession.sessionMtId != undefined && dataSession.sessionMtId.length > 0){
+                $scope.menuLogin = true;
+                $scope.menuMtUserId = dataSession.mtSessionUserId;
             }
         }
 
         getKey.getData()
-            .success(function(data) {
-                $scope.genKey = data.GeneratedKey;
-                if ($scope.genKey.length > 0){
+            .success(function(dataKey) {
+                $scope.menuKey = dataKey.GeneratedKey;
+                if ($scope.menuKey.length > 0){
+                    console.log('userid: '+$scope.sessionMtUserId + ' & key: '+ $scope.menuKey);
                     $http.get('../ws/list_menu.php', {
                         params: {
-                            key : $scope.genKey,
-                            userid : $scope.sessionMtUserId
+                            key : $scope.menuKey,
+                            userid : $scope.menuMtUserId
                         }
                     })
-                        .success(function (data) {
-                            $scope.menuModel = data;
+                        .success(function (dataMenu) {
+                            $scope.menuModel = dataMenu;
                         })
-                        .error(function (data, status) {
-                            console.log("Falha ao realizar a consulta list_menu :" + status);
+                        .error(function (dataMenu, statusMenu) {
+                            console.log("Falha ao realizar a consulta list_menu :" + statusMenu);
                         });
                 }
             });
     })
-    .error(function (data, status) {
+    .error(function (dataSession, status) {
         console.log("Falha ao realizar a consulta FacebookHelper # :" + status);
     });
 })
 .controller("mtQuestionController", function ($scope, $http, $window, getKey)
 {
-    $scope.userid = 0;
+    $scope.questionUserid = 0;
+    $scope.questionKey = 0;
     $scope.viewerror = false;
 
     $scope.SendQuestion = function () {
@@ -55,17 +57,17 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
                 getSessionData : true
             }
         })
-        .success(function (data) {
-            if(data.mtSessionUserId != undefined){
-                $scope.userid = data.mtSessionUserId;
+        .success(function (dataSession) {
+            if(dataSession.mtSessionUserId != undefined){
+                $scope.questionUserid = dataSession.mtSessionUserId;
                 getKey.getData()
-                    .success(function(data){
-                        $scope.genKey = data.GeneratedKey;
-                        if ($scope.genKey.length > 0) {
+                    .success(function(dataKey){
+                        $scope.questionKey = dataKey.GeneratedKey;
+                        if ($scope.questionKey.length > 0) {
                             var parameters = $.param(
                                 {
-                                    'key': $scope.genKey,
-                                    'userid': $scope.userid,
+                                    'key': $scope.questionKey,
+                                    'userid': $scope.questionUserid,
                                     'formQuestion': $scope.formQuestion});
                             $http({
                                 url: '../ws/send_question.php',
@@ -73,12 +75,12 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
                                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                                 data: parameters
                             })
-                            .success(function (data) {
-                                if (data.message != '') {
+                            .success(function (dataQuestion) {
+                                if (dataQuestion.message != '') {
                                     $scope.viewerror = true;
-                                    $scope.errorMessage = data.message;
+                                    $scope.errorMessage = dataQuestion.message;
 
-                                    if (data.id != undefined && data.id > 0) {
+                                    if (dataQuestion.id != undefined && dataQuestion.id > 0) {
                                         $scope.alertClass = 'alert-success';
                                     } else {
                                         $scope.alertClass = 'alert-danger';
@@ -86,8 +88,10 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 
                                 }
                             })
-                            .error(function (data, status) {
-                                console.log('Falha ao enviar pergunta #'+status);
+                            .error(function (dataQuestion, statusQuestion) {
+                                console.log('Falha ao enviar pergunta #' + statusQuestion);
+                                var url = '../html/index.html#/pergunta';
+                                window.location.href = url;
                             });
                         }
                     });
@@ -104,8 +108,8 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 	$scope.genKey = '';	
 
 	getKey.getData()
-	.success(function(data){
-		$scope.genKey = data.GeneratedKey;
+	.success(function(dataKey){
+		$scope.genKey = dataKey.GeneratedKey;
 					
 		//Paineis dinâmicos
 		$scope.panelClass={
@@ -127,16 +131,18 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
 						key : $scope.genKey
 					}
 				 })
-				 .success(function (data) {
-					 if(data.error != undefined)
-						 console.log(data.erro);
-					$scope.perguntasModel = data;
+				 .success(function (dataListQuestion) {
+					 if(dataListQuestion.error != undefined)
+						 console.log(dataListQuestion.erro);
+					$scope.perguntasModel = dataListQuestion;
 					
 					//Desativa o modal
 					serviceData.sendValue('close');
 				 })
-				 .error(function (data, status) {
-					console.log("Falha ao realizar a consulta list_question # :" + status);
+				 .error(function (dataListQuestion, dataStatus) {
+					console.log("Falha ao realizar a consulta list_question # :" + dataStatus);
+                    var url = '../html/index.html#/home';
+                    document.location.href = url;
 				 });	
 		}
 	});
@@ -155,11 +161,14 @@ var mtAppControllers = angular.module('mtApp.Controllers',[])
     })
         .success( function(data){
             $scope.errorMessage = data.message;
+            var url = '../html/index.html#/home';
+            window.location.href = url;
+            console.log(url);
         })
         .error(function (data, status) {
             console.log('Falha ao realizar a consulta #'+status);
         });
-    window.location.href = url;
+
 })
 .controller("ctrlLogin", function ($scope, $facebook)
 {

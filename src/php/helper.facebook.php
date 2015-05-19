@@ -19,6 +19,7 @@ if($_REQUEST['logout']){
     unset($_SESSION);
     session_destroy();
     header('Content-Type: application/json; charset=utf-8');
+    print_r($_SESSION);
     echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
 } else {
     //Se recebeu dados do face, seta a session
