@@ -108,6 +108,9 @@ class User extends restObject {
 		
 		$this->setIdFromRequest($id);
 		$this->respponse = $this->getMyVars();
+        $arrayGetValues = array(0=>0);
+        include "../ws/view_user.php";
+        $this->respponse = $arrayGetValues;
 		return $this->getResponse();
 	}
 	
