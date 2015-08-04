@@ -39,6 +39,12 @@ class User extends restObject {
 		parent::__construct($method, $request, $file);
 	}
 
+    public function Xopin(){
+
+        $this->respponse = array("xopin"=>"Xópin não");
+        return $this->getResponse();
+    }
+
 	/**
 	 * Login example
 	 * @return array
@@ -89,10 +95,12 @@ class User extends restObject {
 	 * @return array
 	 */
 	public function get($id) {
-		$logged = $this->haveToBeLogged();
+		/*
+        $logged = $this->haveToBeLogged();
 		if (true !== $logged) {
 			return $logged;
 		}
+		*/
 		
 		if (!$this->isMethodCorrect('GET')) {
 			return $this->getResponse();
