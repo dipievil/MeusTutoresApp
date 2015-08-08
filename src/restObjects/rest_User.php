@@ -59,7 +59,6 @@ class User extends restObject {
 			return $this->getResponse();
 		}
 
-        print_r($this->request);
 		if (isset($_SERVER['PHP_AUTH_PW']) && isset($_SERVER['PHP_AUTH_USER'])) {
 			$login = $_SERVER['PHP_AUTH_USER'];
 			$password = $_SERVER['PHP_AUTH_PW'];

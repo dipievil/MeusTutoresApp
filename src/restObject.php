@@ -111,11 +111,15 @@ abstract class restObject {
 	 * @return array
 	 */
 	protected function showMyPublicsOnly() {
-		$me = $this;
-		$publics = function() use ($me) {
-			return get_object_vars($me);
-		};
-		return $publics();
+        try {
+            $me = $this;
+            $publics = function () use ($me) {
+                return get_object_vars($me);
+            };
+            return $publics();
+        } catch (Exception $e) {
+            echo json_encode(Array('error' => $e->getMessage()));
+        }
 	}
 
 	/**
