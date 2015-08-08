@@ -58,13 +58,15 @@ class User extends restObject {
 			$this->setError( "User already logged" );
 			return $this->getResponse();
 		}
-		
+
+        print_r($this->request);
 		if (isset($_SERVER['PHP_AUTH_PW']) && isset($_SERVER['PHP_AUTH_USER'])) {
 			$login = $_SERVER['PHP_AUTH_USER'];
 			$password = $_SERVER['PHP_AUTH_PW'];
 		} else if (isset($this->request['login']) && $this->request['password']) {
 			$login = $this->request['login'];
 			$password = $this->request['password'];
+            print_r($this->request);
 		} else {
 			$this->setError('There is no username info');
 			return $this->getResponse();
