@@ -129,7 +129,13 @@ abstract class restObject {
 	 */
 	protected function getMyVars($myVars = null) {
 		if (empty($myVars)) {
-			$myVars = $this->showMyPublicsOnly();
+			//$myVars = $this->showMyPublicsOnly();
+            $me = $this;
+            $publics = function () use ($me) {
+                return get_object_vars($me);
+            };
+            $myVars = $publics();
+            /* TESTE */
 		}
 		if (is_array($myVars)) {
 			/*
