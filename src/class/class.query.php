@@ -393,17 +393,23 @@
 							$arQuery = $this->SubTableAdd($subtable,$arQuery);
 						}
 						
-						$jsonQuery = json_encode($arQuery);
+						//$jsonQuery = json_encode($arQuery);
+                        $jsonQuery = $arQuery;
 						
-						if($jsonQuery == null)
-							$jsonQuery = '{"":""}';
+						if($jsonQuery == null){
+                            $jsonQuery = array(""=>"");
+                            //$jsonQuery = '{"":""}';
+                        }
+
 					}
 					
 				} else {
-					$jsonQuery = '{"":""}';
+					//$jsonQuery = '{"":""}';
+                    $jsonQuery = array(""=>"");
+
 				}
 			} else {
-				$jsonQuery = '{"error":"Accesskey check fail"}';
+				$jsonQuery = array("error"=>"Accesskey check fail");
 			}
 			
 			return $jsonQuery;

@@ -1,0 +1,16 @@
+{
+    "require":
+    {
+
+    },
+    "repositories":
+        [
+            {
+                "type": "composer",
+                "url": "http:\/\/www.phpclasses.org\/"
+            },
+            {
+                "packagist": false
+            }
+        ]
+}

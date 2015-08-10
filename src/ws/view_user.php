@@ -19,12 +19,12 @@ if (!empty($_POST["facebookId"])) {
 
 $objSQL = new queryConsult();
 $objSQL->tableName = 'user';
-$objSQL -> accessKey = $_REQUEST['key'];
-$objSQL -> wheresCol = 'facebookId';
-$objSQL -> wheresVal = $facebookId;
-$strQuery = $objSQL->execSelect();
+//$objSQL -> accessKey = $_REQUEST['key'];
+$appPass = 'v5b6n7';
+$objSQL -> accessKey = hash('sha512', $date[mday].$date[mon].$date[year].$date[minutes].$appPass);
+//$strQuery = $objSQL->execSelect();
+$arrayGetValues = $objSQL->execSelect();
 
-header('Content-Type: application/json; charset=utf-8');
 echo str_replace('\\','',html_entity_decode(preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $strQuery)));
 
 
