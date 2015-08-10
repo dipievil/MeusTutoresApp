@@ -1,4 +1,0 @@
-Teste do commit do CodShip
-Novo teste
-Case sensitive Branches
-Nome correto Alpha

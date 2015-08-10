@@ -23,8 +23,8 @@
 session_start();
 
 function __autoload($className) {
-	if (file_exists("restObjects/rest_$className.php")) {
-		require_once "restObjects/rest_$className.php";
+	if (file_exists("rest/rest_$className.php")) {
+		require_once "rest/rest_$className.php";
 	} else if (file_exists("$className.php")) {
 		require_once "$className.php";
 	} else {
