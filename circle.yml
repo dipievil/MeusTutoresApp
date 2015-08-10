@@ -1,0 +1,3 @@
+notify:
+  webhooks:
+    - url: https://jaconda.im/api/v1/integration/circleci/vZ-k-9WVS18T9ltlN1WADw
