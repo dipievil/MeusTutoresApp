@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/dipievil/MeusTutoresApp/tree/master.svg?style=svg)](https://circleci.com/gh/dipievil/MeusTutoresApp/tree/master)
+
 # MeusTutoresApp
 Rede social web e mobile para correção de frases em português ou outras línguas.
 
