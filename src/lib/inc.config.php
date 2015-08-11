@@ -1,5 +1,5 @@
 <?
-	// Name:	Configuration cls
+	// Name:	Configuration classes
 	// Desc:	Centraliza todas as op��es de configura��o 
 	//          e regras de neg�cio da aplica��o
 	// Date:    20/04/2015

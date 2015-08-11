@@ -1,7 +1,7 @@
 <?php
 
-require_once("cls/cls.mysql.php");
-require_once("cls/cls.query.php");
+require_once("classes/classes.mysql.php");
+require_once("classes/classes.query.php");
 
 
 session_start();

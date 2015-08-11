@@ -6,6 +6,6 @@
  * Time: 11:41
  */
 
-include("../cls/class.mysql.php");
-include("../cls/_class.query.php");
+include("../classes/class.mysql.php");
+include("../classes/_class.query.php");
 include("../lib/inc.config.php");
