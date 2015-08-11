@@ -1,6 +1,8 @@
 <?php
 class UserMapper extends MapperAbstract
 {
+    public $tableName = 'user';
+
     /**
      * Fetch a user object by ID
      *
@@ -13,19 +15,16 @@ class UserMapper extends MapperAbstract
      */
     public function findById($id)
     {
-        // Query database for User with $id
-        // ...
-        $dataFromDb = array(
-            'id'        => $id,
-            'firstname' => 'Brenton',
-            'lastname'  => '',
-            'username'  => 'Tekerson',
-        );
-        return $this->create($dataFromDb);
+        $dbQueries = new classQuery();
+
+        $arWheres = array("id"=>"'".$id."'");
+        $arQuery = $dbQueries->SelectQueryInArray($arWheres,$this->$tableName);
+
+        return $this->create($arQuery);
     }
 
     /**
-     * Poplate the User (DomainObject) with
+     * Populate the User (DomainObject) with
      * the data array.
      *
      * This is a very simple example, but the mapping
@@ -37,11 +36,18 @@ class UserMapper extends MapperAbstract
      */
     public function populate(DomainObjectAbstract $obj, array $data)
     {
-        $obj->setId($data['id']);
-        $obj->firstname = $data['firstname'];
-        $obj->lastname  = $data['lastname'];
-        $obj->username  = $data['username'];
-        return $obj;
+         $obj->setId($data['id']);
+         $obj->firstname = $data['user'];
+         $obj->firstname = $data['tipo'];
+         $obj->firstname = $data['nome'];
+         $obj->firstname = $data['facebookid'];
+         $obj->firstname = $data['email'];
+         $obj->firstname = $data['pass'];
+         $obj->firstname = $data['points'];
+         $obj->firstname = $data['flag'];
+         $obj->firstname = $data['date'];
+         $obj->firstname = $data['ativo'];
+         return $obj;
     }
 
     /**
@@ -64,7 +70,9 @@ class UserMapper extends MapperAbstract
      */
     protected function _insert(DomainObjectAbstract $obj)
     {
-        // ...
+
+
+
     }
 
     /**

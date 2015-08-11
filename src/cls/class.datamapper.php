@@ -10,7 +10,7 @@ abstract class MapperAbstract
 {
     /**
      * Create a new instance of the DomainObject that this
-     * class.domain.php is responsible for. Optionally populating it
+     * cls.domain.php is responsible for. Optionally populating it
      * from a data array.
      *
      * @param array $data
@@ -57,7 +57,7 @@ abstract class MapperAbstract
      * Populate the DomainObject with the values
      * from the data array.
      *
-     * To be implemented by the concrete class.domain.php class
+     * To be implemented by the concrete cls.domain.php cls
      *
      * @param DomainObjectAbstract $obj
      * @param array $data

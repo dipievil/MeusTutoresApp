@@ -37,7 +37,7 @@ class MySQL
     const SQLVALUE_TIME = "time";
     const SQLVALUE_Y_N = "y-n";
 
-    // class-internal variables - do not change
+    // cls-internal variables - do not change
     public $mysql_link = 0; // mysql link resource
     private $active_row = -1; // current row
     private $error_desc = ""; // last mysql error string

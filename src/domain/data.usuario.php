@@ -1,9 +1,17 @@
 <?php
 class User extends DomainObjectAbstract
 {
-    public $firstname;
-    public $lastname;
-    public $username;
+    public $id;
+    public $user;
+    public $tipo;
+    public $nome;
+    public $facebookid;
+    public $email;
+    public $pass;
+    public $points;
+    public $flag;
+    public $date;
+    public $ativo;
 
     /**
      * Get the full name of the User
@@ -15,6 +23,6 @@ class User extends DomainObjectAbstract
      */
     public function getName()
     {
-        return $this->firstname . ' ' . $this->lastname;
+        return $this->nome;
     }
 }
