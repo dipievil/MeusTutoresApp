@@ -5,6 +5,7 @@
  * Date: 11/08/2015
  * Time: 15:10
  */
+include_once('../classes/class.query.php');
 
 class SQLUserRepository implements UserRepositoryInterface
 {
@@ -12,15 +13,22 @@ class SQLUserRepository implements UserRepositoryInterface
 
     public function __construct(Database $db)
     {
-        $this->db = $db;
+        $this->db = new classQuery();
+    }
+
+    public function __destruct(){
+
     }
 
     public function find($id)
     {
+        $user = new User;
         // Find a record with the id = $id
         // from the 'users' table
         // and return it as a User object
-        return $this->db->find($id, 'users', 'User');
+        $arUserData = $this->db->find($id, 'users', 'User');
+        $user->id = $arUserData[$id];
+        return $user;
     }
 
     public function save(User $user)

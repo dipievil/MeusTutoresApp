@@ -5,9 +5,9 @@
  * Date: 10/08/2015
  * Time: 15:46
  *
- * Interface de acesso as classes do banco
+ * Interface de acesso ao banco
  */
-
+include_once('../classes/mysql.php');
 
 class classQuery {
 
@@ -15,23 +15,49 @@ class classQuery {
     public $sqlSortAscending;	//Ordem das colunas
     public $sqlLimit;			//Numero de linhas para busca
     public $sqlOperator; 		//Operador diferenciado para o SQL nos wheres
+    public $strTableName;       //Nome da tabela
+
+    protected $db;
 
     public function __construct(){
+        $this->db = new MySQL();
     }
 
-    public function Insert($arValues,$tableName){
-        $db = new MySQL();
+    public function __destruct(){
+        $this->db->Close();
+    }
 
-        $strSqlInsert = $db->BuildSQLInsert($this->tableName,$arValues);
+    /**
+     * Deleta o registro do banco
+     *
+     * @param $id
+     * @return bool $boolDeleted
+     */
+    public function Delete($id){
+        $boolDeleted = true;
+        $strSqlDelete = $this->db->BuildSQLDelete($this->strTableName,$id);
+        if(!$this->db->Query($strSqlDelete)){
+            $boolDeleted = false;
+        }
+        return $boolDeleted;
+    }
 
-        $arCols = $db->GetColumnNames($tableName);
 
+    /**
+     * Insere um registro na base
+     * @param $arValues
+     * @return int
+     */
+    public function Insert($arValues){
+
+        $strSqlInsert = $this->db->BuildSQLInsert($this->strTableName,$arValues);
+        $arCols = $this->db->GetColumnNames($this->strTableName);
         $arVals = explode(',',$this->whereBasicsVal);
 
-        if(!$db->Query($strSqlInsert)){
+        if(!$this->db->Query($strSqlInsert)){
             $strInsertID = 0;
         } else {
-            $strInsertID = $db->GetLastInsertID();
+            $strInsertID = $this->db->GetLastInsertID();
         }
 
         return $strInsertID;
@@ -40,27 +66,27 @@ class classQuery {
     /*
      * Busca dados do banco via query
      *
-     */
-    /**
+     *
+     *
      * @param $arWhere array
      * @return Records array
      */
-    public function SelectQueryInArray($arWhere,$tableName){
+    public function SelectQueryInArray($arWhere){
 
-        $db = new MySQL();
+        $arConsult = array (''=>'');
+        $arCols = $this->db->GetColumnNames($this->strTableName);
 
-        $arCols = $db->GetColumnNames($tableName);
-
-        $sqlQuery = $db->BuildSQLSelect($tableName,
+        $sqlQuery = $this->db->BuildSQLSelect($this->strTableName,
             $arWhere,
             $arCols,
             $this->sqlSortColumns,
             $this->sqlSortAscending,
             $this->sqlLimit);
 
-        $db->Query($sqlQuery);
+        if($this->db->Query($sqlQuery))
+            $arConsult = $this->db->RecordsArray();
 
-        return $db->RecordsArray();
+        return $arConsult;
     }
 
 } 

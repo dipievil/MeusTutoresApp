@@ -1,4 +1,5 @@
 <?php
+include_once('../model/model.user.php');
 
 interface UserRepositoryInterface
 {
