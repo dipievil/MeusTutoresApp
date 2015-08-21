@@ -72,9 +72,10 @@ class MySQL
                                 $username = null, $password = null, $charset = null) {
 
         $config = new appConfig();
-        if ($database !== null) $config->db_dbname = $database;
-        if ($username !== null) $config->db_user = $username;
-        if ($password !== null) $config->db_pass = $password;
+
+        $this -> db_dbname = ($database !== null) ? $database : $config->db_dbname;
+        $this -> db_user = ($username !== null) ? $username : $config->db_user;
+        $this -> db_pass = ($password !== null) ? $password : $config->db_pass;
 
         if ($server !== null) $this->db_host = $server;
         if ($charset !== null) $this->db_charset = $charset;
