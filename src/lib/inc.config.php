@@ -20,6 +20,10 @@ class appConfig {
     public $development_path;
     public $production_path;
 
+    public $db_user;
+    public $db_pass;
+    public $db_dbname;
+
     /**
      * Construtor da Classe
      */
@@ -44,8 +48,29 @@ class appConfig {
         $this -> profile_points_master = 100;
 
         //Variaveis de caminho
+        $this -> alfa_path = 'mtappalfa.esy.es';
         $this -> development_path = 'meustutoresapp.esy.es';
         $this -> production_path = 'www.meustutoresapp.com.br';
+
+        //Configurações de banco
+        switch($_SERVER['HTTP_HOST']){
+            case $this -> alfa_path:
+                $db_user = "u386071783_mtapp"; //user name
+                $db_pass = "nEalQ6uSzi"; //password
+                $db_dbname = "u386071783_mtapp"; //database name
+            break;
+            case $this -> development_path:
+                $db_user = "u144166463_mtapp"; //user name
+                $db_pass = "nEalQ6uSzi"; //password
+                $db_dbname = "u144166463_mtapp"; //database name
+            break;
+            case $this -> production_path:
+                $db_user = "u144166463_mtapp"; //user name
+                $db_pass = "nEalQ6uSzi"; //password
+                $db_dbname = "u144166463_mtapp"; //database name
+            break;
+
+        }
 
         //Chave de encriptação
         $date = getdate();
