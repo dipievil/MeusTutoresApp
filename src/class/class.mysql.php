@@ -710,7 +710,7 @@ class MySQL
         $this->ResetError();
         if (empty($table)) {
             $columnCount = mysqli_field_count($this->mysql_link);
-            if (! $columnCount) {
+            if (!$columnCount) {
                 $this->SetError();
                 $columns = false;
             } else {
