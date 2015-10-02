@@ -16,6 +16,8 @@
  * Michael Ansaldi
  * Ryan Tse
  */
+ //include_once('../lib/inc.config.php');
+
 class MySQL
 {
     // SET THESE VALUES TO MATCH YOUR DATA CONNECTION
@@ -69,17 +71,19 @@ class MySQL
     public function __construct($connect = true, $database = null, $server = null,
                                 $username = null, $password = null, $charset = null) {
 
-        if ($database !== null) $this->db_dbname = $database;
+        $config = new appConfig();
+
+        $this -> db_dbname = ($database !== null) ? $database : $config->db_dbname;
+        $this -> db_user = ($username !== null) ? $username : $config->db_user;
+        $this -> db_pass = ($password !== null) ? $password : $config->db_pass;
+
         if ($server !== null) $this->db_host = $server;
-        if ($username !== null) $this->db_user = $username;
-        if ($password !== null) $this->db_pass = $password;
         if ($charset !== null) $this->db_charset = $charset;
 
         if (strlen($this->db_host) > 0 &&
             strlen($this->db_user) > 0) {
             if ($connect) $this->Open();
         }
-
     }
 
     /**
@@ -706,7 +710,7 @@ class MySQL
         $this->ResetError();
         if (empty($table)) {
             $columnCount = mysqli_field_count($this->mysql_link);
-            if (! $columnCount) {
+            if (!$columnCount) {
                 $this->SetError();
                 $columns = false;
             } else {

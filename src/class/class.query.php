@@ -158,9 +158,13 @@
 				if(strpos($coluna,'id_') !== false && $coluna != 'id_'.$tableName){
 					//Nome da tabela do Join
 					$tableCheck = str_replace('id_','',$coluna);
-					
+
+                    echo 'table'.$tableCheck;
+
 					//Coluna para alterar
 					$arColChange = $db->GetColumnNames($tableCheck);
+
+                    echo 'table'.$tableCheck;
 					
 					$strQuerySearch = '`'.$tableName.'`.`'.$coluna.'`';
 					$strQueryReplace = '`'.$tableName.'`.`'.$coluna.'`,`'.$tableCheck.'`.`'.$arColChange[1].'`';
@@ -368,22 +372,21 @@
 							}
 						}
 						$strWhereOperator .= ')';
-						
 
 						$sqlQuery = str_replace(" ORDER BY",$strWhereOperator." ORDER BY",$sqlQuery);
-						
 					}
 									
 					if($this->DEBUGMODE)
-						echo $sqlQuery;
+                        echo $sqlQuery;
 
-					$this->strQuery = $sqlQuery;													
-					
-					//Trata os JOINS
+
+					$this->strQuery = $sqlQuery;
+
+                    //Trata os JOINS
 					$this->InserJoins($arCols);
 					
 					if(!$db->Query($this->strQuery)){
-						$jsonQuery = '{"error":"'.str_replace('\"', '\'',$db->Error()).'"}';
+						$jsonQuery = '{"error 384":"'.str_replace('\"', '\'',$db->Error()).'"}';
 					} else {
 						
 						$arQuery = $db->RecordsArray();
